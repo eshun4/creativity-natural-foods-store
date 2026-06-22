@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" role="img" aria-label="Creativity Natural Foods logo">
+  <rect width="100" height="100" rx="24" fill="#232220"/>
+  <circle cx="50" cy="50" r="45" fill="#141311" stroke="#E3A52C" stroke-width="3"/>
+  <style>.hexbg { fill: #E3A52C; fill-opacity: .16; stroke: #F4EFE6; stroke-opacity: .35; stroke-width: 1.6; }
+.honey { fill: #E3A52C; }
+.rim { stroke: #F4EFE6; stroke-width: 8; stroke-linecap: round; }
+.jar { fill: none; stroke: #F4EFE6; stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+.jar-gloss { fill: none; stroke: #FFFFFF; stroke-opacity: .55; stroke-width: 3.5; stroke-linecap: round; }
+.nub { stroke: #E3A52C; stroke-width: 4; stroke-linecap: round; }
+.drop { fill: #E3A52C; }
+.wheat .stalk { fill: none; stroke: #E3A52C; stroke-opacity: .8; stroke-width: 2.6; stroke-linecap: round; stroke-linejoin: round; }
+.wheat .grain { fill: #E3A52C; fill-opacity: .8; }
+.wheat .awn { fill: none; stroke: #E3A52C; stroke-opacity: .58; stroke-width: 1.4; stroke-linecap: round; }</style>
+  <g transform="translate(7 5) scale(.86)">
+<g class="comb">
+<path class="hexbg" d="M24.0 17.0 L33.5 22.5 L33.5 33.5 L24.0 39.0 L14.5 33.5 L14.5 22.5 Z"></path>
+<path class="hexbg" d="M76.0 17.0 L85.5 22.5 L85.5 33.5 L76.0 39.0 L66.5 33.5 L66.5 22.5 Z"></path>
+<path class="hexbg" d="M82.0 46.0 L89.8 50.5 L89.8 59.5 L82.0 64.0 L74.2 59.5 L74.2 50.5 Z"></path>
+<path class="hexbg" d="M18.0 46.0 L25.8 50.5 L25.8 59.5 L18.0 64.0 L10.2 59.5 L10.2 50.5 Z"></path>
+</g>
+<g class="wheat">
+<path class="stalk" d="M60.0 97.0 C52.0 86.0 33.0 74.0 18.0 60.0"></path>
+<path class="stalk" d="M40.0 97.0 C48.0 86.0 67.0 74.0 82.0 60.0"></path>
+<path class="grain" d="M38.9 69.2 Q38.7 75.5 43.0 80.0 Q43.2 73.7 38.9 69.2 Z"></path>
+<path class="grain" d="M30.9 79.1 Q36.2 82.4 42.3 80.9 Q37.0 77.6 30.9 79.1 Z"></path>
+<path class="grain" d="M34.1 66.1 Q34.0 71.8 37.9 75.9 Q38.1 70.2 34.1 66.1 Z"></path>
+<path class="grain" d="M26.8 75.3 Q31.7 78.3 37.2 76.9 Q32.3 73.9 26.8 75.3 Z"></path>
+<path class="grain" d="M29.2 62.9 Q29.1 68.0 32.7 71.7 Q32.8 66.6 29.2 62.9 Z"></path>
+<path class="grain" d="M22.6 71.2 Q27.0 73.9 32.0 72.7 Q27.6 70.0 22.6 71.2 Z"></path>
+<path class="grain" d="M24.4 59.5 Q24.3 64.1 27.4 67.4 Q27.6 62.8 24.4 59.5 Z"></path>
+<path class="grain" d="M18.3 67.0 Q22.2 69.4 26.7 68.4 Q22.8 65.9 18.3 67.0 Z"></path>
+<path class="grain" d="M19.8 55.9 Q19.5 60.0 22.2 63.0 Q22.5 58.9 19.8 55.9 Z"></path>
+<path class="grain" d="M14.1 62.5 Q17.4 64.7 21.4 63.9 Q18.0 61.6 14.1 62.5 Z"></path>
+<path class="grain" d="M13.0 55.4 Q15.0 59.5 19.2 61.1 Q17.3 57.0 13.0 55.4 Z"></path>
+<line class="awn" x1="29.2" x2="24.3" y1="62.9" y2="54.2"></line>
+<line class="awn" x1="22.6" x2="13.0" y1="71.2" y2="68.4"></line>
+<line class="awn" x1="24.4" x2="19.7" y1="59.5" y2="50.7"></line>
+<line class="awn" x1="18.3" x2="8.7" y1="67.0" y2="64.0"></line>
+<line class="awn" x1="19.8" x2="15.2" y1="55.9" y2="47.0"></line>
+<line class="awn" x1="14.1" x2="4.6" y1="62.5" y2="59.2"></line>
+<line class="awn" x1="15.0" x2="3.4" y1="57.2" y2="51.4"></line>
+<line class="awn" x1="15.0" x2="5.4" y1="57.2" y2="48.4"></line>
+<line class="awn" x1="15.0" x2="8.2" y1="57.2" y2="46.1"></line>
+<path class="grain" d="M69.1 79.1 Q63.0 77.6 57.7 80.9 Q63.8 82.4 69.1 79.1 Z"></path>
+<path class="grain" d="M61.1 69.2 Q56.8 73.7 57.0 80.0 Q61.3 75.5 61.1 69.2 Z"></path>
+<path class="grain" d="M73.2 75.3 Q67.7 73.9 62.8 76.9 Q68.3 78.3 73.2 75.3 Z"></path>
+<path class="grain" d="M65.9 66.1 Q61.9 70.2 62.1 75.9 Q66.0 71.8 65.9 66.1 Z"></path>
+<path class="grain" d="M77.4 71.2 Q72.4 70.0 68.0 72.7 Q73.0 73.9 77.4 71.2 Z"></path>
+<path class="grain" d="M70.8 62.9 Q67.2 66.6 67.3 71.7 Q70.9 68.0 70.8 62.9 Z"></path>
+<path class="grain" d="M81.7 67.0 Q77.2 65.9 73.3 68.4 Q77.8 69.4 81.7 67.0 Z"></path>
+<path class="grain" d="M75.6 59.5 Q72.4 62.8 72.6 67.4 Q75.7 64.1 75.6 59.5 Z"></path>
+<path class="grain" d="M85.9 62.5 Q82.0 61.6 78.6 63.9 Q82.6 64.7 85.9 62.5 Z"></path>
+<path class="grain" d="M80.2 55.9 Q77.5 58.9 77.8 63.0 Q80.5 60.0 80.2 55.9 Z"></path>
+<path class="grain" d="M87.0 55.4 Q82.7 57.0 80.8 61.1 Q85.0 59.5 87.0 55.4 Z"></path>
+<line class="awn" x1="77.4" x2="87.0" y1="71.2" y2="68.4"></line>
+<line class="awn" x1="70.8" x2="75.7" y1="62.9" y2="54.2"></line>
+<line class="awn" x1="81.7" x2="91.3" y1="67.0" y2="64.0"></line>
+<line class="awn" x1="75.6" x2="80.3" y1="59.5" y2="50.7"></line>
+<line class="awn" x1="85.9" x2="95.4" y1="62.5" y2="59.2"></line>
+<line class="awn" x1="80.2" x2="84.8" y1="55.9" y2="47.0"></line>
+<line class="awn" x1="85.0" x2="91.8" y1="57.2" y2="46.1"></line>
+<line class="awn" x1="85.0" x2="94.6" y1="57.2" y2="48.4"></line>
+<line class="awn" x1="85.0" x2="96.6" y1="57.2" y2="51.4"></line>
+</g>
+<path class="honey" d="M31.5 53.0 C38.0 51.0 44.0 55.0 50.0 53.0 C56.0 51.0 62.0 55.0 68.5 53.0 C69.0 64.0 68.5 70.0 67.0 75.0 C65.0 81.0 59.0 83.5 50.0 83.5 C41.0 83.5 35.0 81.0 33.0 75.0 C31.5 70.0 31.0 64.0 31.5 53.0 Z"></path>
+<line class="rim" x1="34" x2="66" y1="40.5" y2="40.5"></line>
+<path class="jar" d="M33.0 44.0 C29.0 50.0 29.0 58.0 30.0 66.0 C31.0 77.0 38.0 85.0 50.0 85.0 C62.0 85.0 69.0 77.0 70.0 66.0 C71.0 58.0 71.0 50.0 67.0 44.0"></path>
+<path class="jar-gloss" d="M37.0 50.0 C33.0 58.0 33.0 66.0 35.0 73.0"></path>
+<line class="nub" x1="50" x2="50" y1="7" y2="15"></line>
+<g class="drip"><path class="drop" d="M50.0 20.0 C53.5 25.0 56.0 28.0 56.0 31.5 C56.0 35.5 53.2 38.0 50.0 38.0 C46.8 38.0 44.0 35.5 44.0 31.5 C44.0 28.0 46.5 25.0 50.0 20.0 Z"></path></g>
+</g>
+</svg>
