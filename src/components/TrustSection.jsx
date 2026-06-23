@@ -1,99 +1,188 @@
-import { BadgeCheckIcon, GhanaFlagIcon, GlobeIcon, LeafIcon, MessageCircleIcon, ShieldIcon, WhatsAppIcon } from './icons';
+import { Fragment, useEffect, useRef } from "react";
+import {
+  GhanaFlagIcon,
+  LeafIcon,
+  MessageCircleIcon,
+  ShieldIcon,
+  WhatsAppIcon,
+} from "./icons";
 
 const trustBadges = [
   {
     icon: <GhanaFlagIcon />,
-    iconTone: 'ghana',
-    title: 'Made in Ghana',
-    text: 'Produced by Debee Farms in Teshie-Nungua with a local Ghanaian food identity.',
+    iconTone: "ghana",
+    title: "Made in Ghana",
+    text: "Produced by Debee Farms in Teshie-Nungua with a local Ghanaian food identity.",
   },
   {
     icon: <LeafIcon />,
-    iconTone: 'leaf',
-    title: 'Natural pantry staples',
-    text: 'Honey, porridge mixes, sorghum powder, and groundnut paste selected for everyday family use.',
+    iconTone: "leaf",
+    title: "Natural pantry staples",
+    text: "Honey, porridge mixes, sorghum powder, and groundnut paste selected for everyday family use.",
   },
   {
     icon: <ShieldIcon />,
-    iconTone: 'gold',
-    title: 'Order confirmed first',
-    text: 'Every order can be reviewed through WhatsApp before packing, delivery, or shipping is finalized.',
+    iconTone: "gold",
+    title: "Order confirmed first",
+    text: "Every order can be reviewed through WhatsApp before packing, delivery, or shipping is finalized.",
   },
   {
     icon: <WhatsAppIcon />,
-    iconTone: 'whatsapp',
-    title: 'WhatsApp support',
-    text: 'Customers can ask questions, confirm stock, and send delivery notes before completing the order.',
+    iconTone: "whatsapp",
+    title: "WhatsApp support",
+    text: "Customers can ask questions, confirm stock, and send delivery notes before completing the order.",
   },
 ];
 
-const trustHighlights = [
-  {
-    icon: <GhanaFlagIcon />,
-    iconTone: 'ghana',
-    value: 'Ghana',
-    label: 'local production',
-    text: 'Produced with a clear Ghana-rooted brand identity and local food focus.',
-  },
-  {
-    icon: <WhatsAppIcon />,
-    iconTone: 'whatsapp',
-    value: 'WhatsApp',
-    label: 'human order support',
-    text: 'Customers speak to a real person for stock, delivery, and order confirmation.',
-  },
-  {
-    icon: <GlobeIcon />,
-    iconTone: 'blue',
-    value: 'Local + abroad',
-    label: 'delivery-ready design',
-    text: 'Structured for Ghana delivery first, with room for international shipping later.',
-  },
-];
+const trustTitleItems = ["Real food", "Clear ordering", "Human support"];
 
 export function TrustSection() {
-  return (
-    <section className="trust-section" aria-label="Why customers can trust us">
-      <div className="trust-inner wrap">
-        <div className="trust-copy-card">
-          <p className="eyebrow trust-eyebrow"><span className="trust-eyebrow-icon"><ShieldIcon /></span>Why customers can trust us</p>
-          <h2>Real food, clear ordering, and human support before checkout</h2>
-          <p className="trust-copy-lead">This store is designed to make buyers feel safe before they pay. Customers can see what they are ordering, confirm availability, ask delivery questions, and send the final order directly through WhatsApp.</p>
+  const introRef = useRef(null);
 
-          <div className="trust-rating-card" aria-label="Customer trust highlights">
-            <span className="trust-rating-icon"><ShieldIcon /></span>
-            <div>
-              <strong>Built for first-time buyers</strong>
-              <p>Simple product cards, visible delivery notes, and WhatsApp confirmation reduce confusion before purchase.</p>
+  useEffect(() => {
+    const section = introRef.current;
+
+    if (!section) return;
+
+    if (typeof window === "undefined" || !("IntersectionObserver" in window)) {
+      section.classList.add("is-visible");
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          section.classList.add("is-visible");
+          observer.disconnect();
+        }
+      },
+      {
+        threshold: 0.32,
+        rootMargin: "0px 0px -12% 0px",
+      },
+    );
+
+    observer.observe(section);
+
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <>
+      <section
+        ref={introRef}
+        className="trust-section trust-section-intro trust-scroll-title-section has-section-divider"
+        aria-label="Why customers can trust us"
+      >
+        <div className="trust-section-padding wrap">
+          <div className="trust-hero-content">
+            <p className="eyebrow trust-eyebrow">
+              <span className="trust-eyebrow-icon">
+                <ShieldIcon />
+              </span>
+              Why customers can trust us
+            </p>
+
+            <h2
+              className="trust-animated-title"
+              aria-label="Real food, clear ordering, human support"
+            >
+              <span className="trust-title-list" aria-hidden="true">
+                {trustTitleItems.map((item, itemIndex) => (
+                  <Fragment key={item}>
+                    <span
+                      className={`trust-title-line trust-title-line-${itemIndex + 1}`}
+                    >
+                      {item.split("").map((letter, letterIndex) => (
+                        <span
+                          className="trust-title-char"
+                          style={{
+                            "--char-index": itemIndex * 18 + letterIndex,
+                          }}
+                          key={`${item}-${letterIndex}`}
+                        >
+                          {letter === " " ? "\u00A0" : letter}
+                        </span>
+                      ))}
+                    </span>
+
+                    {itemIndex < trustTitleItems.length - 1 && (
+                      <span
+                        className="trust-title-separator"
+                        style={{
+                          "--char-index": itemIndex * 18 + item.length + 1,
+                        }}
+                      >
+                        •
+                      </span>
+                    )}
+                  </Fragment>
+                ))}
+              </span>
+            </h2>
+
+            <p className="trust-copy-lead">
+              This store is designed to make buyers feel safe before they pay.
+              Customers can see what they are ordering, confirm availability,
+              ask delivery questions, and send the final order directly through
+              WhatsApp.
+            </p>
+
+            <div
+              className="trust-proof-line"
+              aria-label="Customer trust highlight"
+            >
+              <span className="trust-proof-icon">
+                <MessageCircleIcon />
+              </span>
+
+              <div>
+                <strong>Built for first-time buyers</strong>
+                <p>
+                  Simple product cards, visible delivery notes, and WhatsApp
+                  confirmation reduce confusion before purchase.
+                </p>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="trust-badge-grid">
-          {trustBadges.map((badge) => (
-            <article className="trust-badge-card" key={badge.title}>
-              <span className={`trust-badge-icon ${badge.iconTone ? `icon-tone-${badge.iconTone}` : ""}`}>{badge.icon}</span>
-              <div>
-                <strong>{badge.title}</strong>
-                <p>{badge.text}</p>
-              </div>
-            </article>
-          ))}
-        </div>
+        <svg
+          className="section-divider"
+          viewBox="0 0 1920 60"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path
+            fill="var(--trust-divider-fill)"
+            d="M0,80.75H1920V45.833H1742.083a80.491,80.491,0,0,1,12.863-1.55c5.2-.26,17.24-.3,24.153-.24,26.69.222,54.377,1.094,79.341.96,19.287-.1,37.1-.372,53.573-.788L1920,44V34.078l-6.614.216-9.221.256c-6.252.147-12.7.249-19.265.32-13.132.14-26.739.15-40.206.125-26.935-.052-53.313-.247-74.22.168-14.367-1.4-32.582-.756-48.293-1.92-10.145.509-20.876.936-24.149,2.4-16.09-.266-37.611,2.532-50.019.479V34.684c-10.959-2.291-33.371-1.869-48.292-3.84-15.861-.512-26.214,1.347-39.671,1.92-7.032.178-5.941-.773-13.8-.481-40.751-.071-41.131,5.477-62.087,8.16-4.569-5.691-47.085-5.126-77.622-5.04-2.333-4.154-22.643-5.808-50.015-6.479-4.677-2.069-17.763-2.969-22.423-5.04-4.7-.175-3.474.477-6.9.479-11.485-2.964-40.092-2.449-63.813-3.36-23.312.6-29.4,3.589-55.195,3.841-8.3-3.783-56.5-4.561-84.513-3.361-.316-1.857-5.682-3.862-20.7-4.8-2.193-.137-6.78.122-10.352,0-16.331-.564-22.974-3.145-39.671-1.441-22.812-1.938-73.831-3.919-98.311-.719-4.315-2.2-15.369-3.462-20.7-5.521-23.122-.714-41.26-2.815-65.54-2.64-13.5,1-29.918,1.6-39.671,3.12.27,1.317-1.305,2.38-6.9,2.88-35.562-1.333-83.117-2.545-93.139,2.88-14.338-.314-8.341,2.2-22.423,1.92-5.17-.16-2.615-1.4-6.9-1.68-36.327-1.894-80.653-1.762-100.041,2.161-12.433-1.631-21.648-3.708-36.221-5.04-13.359.1-36.33-.325-48.293-1.2-32.483.6-42.463,4.331-53.471,7.92-25.227-.147-43.752,2.274-58.641,4.321-11.966-1.189-27.56-.426-39.67-1.441-19.514,1.284-40.772,2.328-53.468,4.561C301.584,31.04,294,33.888,283.7,37.8c-15.047-.774-19.865-3.5-36.221-4.321-10.453-.522-37.12-1.01-48.3-.959-10.184.046-17.188,1.062-27.595.719-18.244,2.022-31.516,4.736-46.57,7.2-3.726,2.091-9.8,3.854-17.5,5.39H4.061c-.734-1.281-1.512-2.592-2.344-3.949-.546-.09-1.13-.175-1.717-.26Z"
+          />
+        </svg>
+      </section>
 
-        <div className="trust-highlight-strip" aria-label="Trust summary highlights">
-          {trustHighlights.map((highlight) => (
-            <article className="trust-highlight-card" key={highlight.label}>
-              <span className={`trust-highlight-icon ${highlight.iconTone ? `icon-tone-${highlight.iconTone}` : ""}`}>{highlight.icon}</span>
-              <div className="trust-highlight-copy">
-                <strong>{highlight.value}</strong>
-                <span>{highlight.label}</span>
-                <p>{highlight.text}</p>
-              </div>
-            </article>
-          ))}
+      <section
+        className="trust-section trust-section-soft"
+        aria-label="Customer trust details"
+      >
+        <div className="trust-section-padding wrap">
+          <div className="trust-badge-grid">
+            {trustBadges.map((badge) => (
+              <article className="trust-service-main" key={badge.title}>
+                <div className="trust-service-card">
+                  <div
+                    className={`trust-service-logo ${badge.iconTone ? `icon-tone-${badge.iconTone}` : ""}`}
+                  >
+                    {badge.icon}
+                  </div>
+
+                  <h3>{badge.title}</h3>
+                  <p>{badge.text}</p>
+                </div>
+              </article>
+            ))}
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+    </>
   );
 }
