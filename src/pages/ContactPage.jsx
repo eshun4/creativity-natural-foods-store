@@ -216,8 +216,8 @@ export function ContactPage({ setPage }) {
                           onChange={updateField}
                           required
                         >
-                          <option value="ghana">🇬🇭 Ghana store</option>
-                          <option value="usa">🇺🇸 USA store</option>
+                          <option value="ghana">Ghana store</option>
+                          <option value="usa">USA store</option>
                         </select>
                       </div>
                     </label>

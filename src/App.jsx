@@ -152,6 +152,7 @@ export default function App() {
   );
 
   const [page, setPage] = useState(() => getInitialPageFromUrl());
+  const [showMobileScrollTop, setShowMobileScrollTop] = useState(false);
 
   const [cart, setCart] = useState(() =>
     sanitizeCart(readStorage(STORAGE_KEYS.cart, [])),
@@ -332,6 +333,40 @@ export default function App() {
     };
   }, []);
 
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    let ticking = false;
+
+    function updateScrollTopButton() {
+      const isSmallView = window.matchMedia("(max-width: 767px)").matches;
+      const shouldShow = isSmallView && window.scrollY > 360;
+
+      setShowMobileScrollTop((current) =>
+        current === shouldShow ? current : shouldShow,
+      );
+
+      ticking = false;
+    }
+
+    function handleScroll() {
+      if (ticking) return;
+
+      ticking = true;
+      window.requestAnimationFrame(updateScrollTopButton);
+    }
+
+    updateScrollTopButton();
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    window.addEventListener("resize", updateScrollTopButton);
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+      window.removeEventListener("resize", updateScrollTopButton);
+    };
+  }, []);
+
   const translatedProducts = useMemo(
     () =>
       products.map((product) => translateProduct(product, t, customerMarket)),
@@ -394,6 +429,7 @@ export default function App() {
         priceFilter,
         customerMarket,
       );
+
       const discountMatch = discountMatches(product, discountFilter);
 
       const text =
@@ -406,10 +442,10 @@ export default function App() {
   }, [
     activeCategories,
     committedSearch,
+    customerMarket,
     discountFilter,
     priceFilter,
     translatedProducts,
-    customerMarket,
   ]);
 
   const suggestions = useMemo(() => {
@@ -577,16 +613,23 @@ export default function App() {
 
   function placeOrder(orderDetails = null) {
     const marketSettings = getMarketSettings(customerMarket);
+
     const storedItems = cartItems.map((item) => ({
       id: item.id,
       name: item.name,
       size: item.size,
       image: item.image,
       finalPrice: item.finalPrice,
-      quantity: item.quantity,
       market: item.market,
       currencyCode: item.currencyCode,
+      quantity: item.quantity,
     }));
+
+    const enrichedOrderDetails = {
+      ...orderDetails,
+      market: customerMarket,
+      currencyCode: marketSettings.currencyCode,
+    };
 
     const orderRecord = {
       id: `CNF-${Date.now()}`,
@@ -594,19 +637,17 @@ export default function App() {
       items: storedItems,
       market: customerMarket,
       currencyCode: marketSettings.currencyCode,
-      details: {
-        ...orderDetails,
-        market: customerMarket,
-        currencyCode: marketSettings.currencyCode,
-      },
+      details: enrichedOrderDetails,
     };
 
     setLastOrderItems(storedItems);
-    setLastOrderDetails(orderDetails);
+    setLastOrderDetails(enrichedOrderDetails);
 
     writeStorage(STORAGE_KEYS.lastOrder, {
       items: storedItems,
-      details: orderDetails,
+      market: customerMarket,
+      currencyCode: marketSettings.currencyCode,
+      details: enrichedOrderDetails,
     });
 
     setOrderHistory((current) => [orderRecord, ...current].slice(0, 12));
@@ -820,6 +861,31 @@ export default function App() {
 
       {!isAdminPage && (
         <FloatingJuniorChatbot setPage={navigateToPage} mode={mode} />
+      )}
+
+      {!isAdminPage && (
+        <button
+          className={`mobile-scroll-top ${
+            showMobileScrollTop ? "is-visible" : ""
+          }`}
+          type="button"
+          onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+          aria-label="Scroll to top"
+          tabIndex={showMobileScrollTop ? 0 : -1}
+        >
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.6"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M12 19V5" />
+            <path d="M5 12l7-7 7 7" />
+          </svg>
+        </button>
       )}
 
       {!isAdminPage && (

@@ -43,7 +43,7 @@ export function Subnav({ t, onSubnavSelect, setPage, activeItem = "all" }) {
       >
         Deals
       </a> */}
-      <a
+      {/* <a
         className={subnavClass(activeItem === "story")}
         href="#story"
         aria-current={activeItem === "story" ? "page" : undefined}
@@ -53,8 +53,8 @@ export function Subnav({ t, onSubnavSelect, setPage, activeItem = "all" }) {
         }}
       >
         Our Story
-      </a>
-      <a
+      </a> */}
+      {/* <a
         className={subnavClass(activeItem === "local-staples")}
         href="#local-staples"
         aria-current={activeItem === "local-staples" ? "page" : undefined}
@@ -64,7 +64,7 @@ export function Subnav({ t, onSubnavSelect, setPage, activeItem = "all" }) {
         }}
       >
         Local Staples
-      </a>
+      </a> */}
       <a
         className={subnavClass(activeItem === "delivery-details")}
         href="#delivery"
