@@ -10953,3 +10953,289 @@ button:disabled {
     padding: 4px 9px;
   }
 }
+
+/* ============================================================
+   MOBILE PRODUCT CARD ACTION FIX
+   Fixes Details + Add to cart layout on small screens
+   ============================================================ */
+
+@media (max-width: 760px) {
+  .card-foot {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 12px;
+    margin-top: 14px;
+  }
+
+  .price-stack {
+    width: 100%;
+    align-items: flex-start;
+  }
+
+  .card-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
+    gap: 8px;
+    align-items: center;
+    justify-content: stretch;
+  }
+
+  .card-actions .details-btn,
+  .card-actions .add {
+    width: 100%;
+    min-width: 0;
+    height: 36px;
+    padding-left: 8px;
+    padding-right: 8px;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .card-actions .details-btn {
+    font-size: 11px;
+  }
+
+  .card-actions .add {
+    gap: 5px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+
+  .card-actions .add svg {
+    width: 13px;
+    height: 13px;
+    flex: 0 0 auto;
+  }
+}
+
+@media (max-width: 380px) {
+  .card-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .card-actions .details-btn,
+  .card-actions .add {
+    height: 34px;
+  }
+}
+
+/* ============================================================
+   TRUST TILES TOP SPACING FIX - TIGHT VERSION
+   ============================================================ */
+
+.trust-section-soft .trust-section-padding {
+  padding-top: 0;
+  padding-bottom: clamp(54px, 7vw, 92px);
+}
+
+.trust-badge-grid {
+  padding-top: clamp(48px, 4.5vw, 64px);
+}
+
+/* ============================================================
+   MOBILE CHECKOUT / ORDER SUMMARY FIX
+   Fixes clamped order summary + item controls on small screens
+   ============================================================ */
+
+@media (max-width: 640px) {
+  .checkout-page {
+    padding: 24px var(--page-pad) 88px;
+    overflow-x: hidden;
+  }
+
+  .checkout-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+    width: 100%;
+  }
+
+  .checkout-items-card,
+  .checkout-summary-card,
+  .empty-checkout-card {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    padding: 20px;
+    border-radius: 24px;
+    overflow: hidden;
+  }
+
+  .checkout-items-card h2,
+  .checkout-summary-card h2 {
+    font-size: 20px;
+    line-height: 1.15;
+    margin-bottom: 18px;
+  }
+
+  .checkout-item {
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 14px;
+    padding: 16px 0;
+    width: 100%;
+    min-width: 0;
+  }
+
+  .checkout-item img {
+    width: 76px;
+    height: 88px;
+    border-radius: 16px;
+    padding: 7px;
+  }
+
+  .checkout-info {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .checkout-info h3 {
+    font-size: 16px;
+    line-height: 1.2;
+    margin-bottom: 4px;
+    overflow-wrap: anywhere;
+  }
+
+  .checkout-info > p {
+    font-size: 12.5px;
+    margin-bottom: 8px;
+  }
+
+  .checkout-price-line {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2px;
+    align-items: start;
+  }
+
+  .line-total {
+    font-size: 20px;
+    line-height: 1;
+  }
+
+  .checkout-qty-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .checkout-qty-row button {
+    min-width: 34px;
+    width: 34px;
+    height: 32px;
+    flex: 0 0 auto;
+  }
+
+  .checkout-qty-row span {
+    min-width: auto;
+    flex: 0 0 auto;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .checkout-qty-row .cart-remove,
+  .cart-qty-row.checkout-qty-row .cart-remove {
+    width: auto;
+    min-width: 72px !important;
+    height: 32px;
+    padding: 0 10px !important;
+    margin-left: 4px;
+    border: 1px solid transparent !important;
+    border-radius: var(--r-pill);
+    background: transparent !important;
+    white-space: nowrap;
+  }
+
+  .checkout-summary-card {
+    position: static;
+    top: auto;
+  }
+
+  .summary-line,
+  .summary-total {
+    width: 100%;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 14px;
+    align-items: center;
+    padding: 13px 0;
+  }
+
+  .summary-line span,
+  .summary-total span {
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+
+  .summary-line strong,
+  .summary-total strong {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .summary-total {
+    padding-top: 16px;
+  }
+
+  .summary-total strong {
+    font-size: clamp(26px, 9vw, 34px);
+    line-height: 1;
+  }
+
+  .checkout-summary-card .payment-method-section,
+  .checkout-summary-card .customer-box {
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 380px) {
+  .checkout-items-card,
+  .checkout-summary-card,
+  .empty-checkout-card {
+    padding: 18px;
+  }
+
+  .checkout-item {
+    grid-template-columns: 68px minmax(0, 1fr);
+    gap: 12px;
+  }
+
+  .checkout-item img {
+    width: 68px;
+    height: 80px;
+  }
+
+  .checkout-info h3 {
+    font-size: 15px;
+  }
+
+  .checkout-qty-row {
+    gap: 7px;
+  }
+
+  .checkout-qty-row button {
+    min-width: 32px;
+    width: 32px;
+    height: 30px;
+  }
+
+  .checkout-qty-row .cart-remove,
+  .cart-qty-row.checkout-qty-row .cart-remove {
+    margin-left: 0;
+    min-width: 66px !important;
+    height: 30px;
+    font-size: 11px !important;
+  }
+
+  .summary-line,
+  .summary-total {
+    gap: 10px;
+  }
+}
