@@ -1,13 +1,17 @@
 import {
-  STORE_SETTINGS,
   formatCurrency,
+  getPriceFilters,
   getProductFinalPrice,
+  getProductMarketPrice,
   getProductSavings,
-} from '../config/storeSettings';
+  getMarketSettings,
+} from "../config/storeSettings";
 
-export function translateProduct(product, t) {
-  const finalPrice = getProductFinalPrice(product);
-  const savings = getProductSavings(product);
+export function translateProduct(product, t, customerMarket) {
+  const marketPrice = getProductMarketPrice(product, customerMarket);
+  const finalPrice = getProductFinalPrice(product, customerMarket);
+  const savings = getProductSavings(product, customerMarket);
+  const marketSettings = getMarketSettings(marketPrice.market);
 
   return {
     ...product,
@@ -15,22 +19,32 @@ export function translateProduct(product, t) {
     categoryName: t[product.categoryKey] || product.category,
     size: t[product.sizeKey] || product.sizeKey,
     description: t[product.descKey] || product.descKey,
+    market: marketPrice.market,
+    marketLabel: marketSettings.label,
+    currencyCode: marketSettings.currencyCode,
+    originalPrice: marketPrice.originalPrice,
+    salePrice: marketPrice.salePrice,
     finalPrice,
     savings,
-    hasDiscount: Boolean(product.salePrice),
-    priceText: formatCurrency(finalPrice),
-    originalPriceText: formatCurrency(product.originalPrice),
+    hasDiscount: savings > 0,
+    priceText: formatCurrency(finalPrice, marketPrice.market),
+    originalPriceText: formatCurrency(
+      marketPrice.originalPrice,
+      marketPrice.market,
+    ),
   };
 }
 
-export function priceInRange(price, priceFilter) {
-  const filter = STORE_SETTINGS.priceFilters.find((item) => item.id === priceFilter);
-  if (!filter || filter.id === 'all') return true;
+export function priceInRange(price, priceFilter, customerMarket) {
+  const filter = getPriceFilters(customerMarket).find(
+    (item) => item.id === priceFilter,
+  );
+  if (!filter || filter.id === "all") return true;
   return price >= filter.min && price <= filter.max;
 }
 
 export function discountMatches(product, discountFilter) {
-  if (discountFilter === 'discounted') return product.hasDiscount;
-  if (discountFilter === 'regular') return !product.hasDiscount;
+  if (discountFilter === "discounted") return product.hasDiscount;
+  if (discountFilter === "regular") return !product.hasDiscount;
   return true;
 }

@@ -32,7 +32,7 @@ export function Subnav({ t, onSubnavSelect, setPage, activeItem = "all" }) {
           {t[cat.labelKey]}
         </a>
       ))}
-      <a
+      {/* <a
         className={subnavClass(activeItem === "deals")}
         href="#section-deals"
         aria-current={activeItem === "deals" ? "page" : undefined}
@@ -42,7 +42,7 @@ export function Subnav({ t, onSubnavSelect, setPage, activeItem = "all" }) {
         }}
       >
         Deals
-      </a>
+      </a> */}
       <a
         className={subnavClass(activeItem === "story")}
         href="#story"

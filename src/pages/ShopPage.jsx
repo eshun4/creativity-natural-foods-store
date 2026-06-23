@@ -1,4 +1,4 @@
-import { STORE_SETTINGS } from "../config/storeSettings";
+import { STORE_SETTINGS, getPriceFilters } from "../config/storeSettings";
 import { ProductCard } from "../components/ProductCard";
 import { HeroCarousel } from "../components/HeroCarousel";
 import { PromoCardGrid } from "../components/PromoCardGrid";
@@ -28,6 +28,7 @@ export function ShopPage({
   onToggleWishlist,
   recentlyViewedProducts = [],
   cartQuantityById = {},
+  customerMarket,
 }) {
   const bestSellerProducts = allProducts.filter((product) =>
     ["honey-1l", "honey-2l", "pb-bucket", "mixed-porridge-tombrown"].includes(
@@ -79,9 +80,14 @@ export function ShopPage({
     }
   }
 
+  const activePriceFilters = getPriceFilters(customerMarket);
+
   return (
     <>
-      <HeroCarousel onSlideAction={handleSlideAction} />
+      <HeroCarousel
+        onSlideAction={handleSlideAction}
+        customerMarket={customerMarket}
+      />
 
       <PromoCardGrid
         t={t}
@@ -215,7 +221,7 @@ export function ShopPage({
 
             <div className="filter-block">
               <h3 className="filter-heading">{t.f_price}</h3>
-              {STORE_SETTINGS.priceFilters.map((filter) => (
+              {activePriceFilters.map((filter) => (
                 <label className="filter-option" key={filter.id}>
                   <input
                     type="radio"

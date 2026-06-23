@@ -1,102 +1,185 @@
-import { useEffect, useRef, useState } from 'react';
-import { bannerSlides } from '../data/bannerSlides';
+import { useEffect, useRef, useState } from "react";
+import { bannerSlides } from "../data/bannerSlides";
+import { getDisplayPriceFromPriceSet } from "../config/storeSettings";
 
-export function HeroCarousel({ onSlideAction }) {
+export function HeroCarousel({ onSlideAction, customerMarket }) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const [prevIndex, setPrevIndex] = useState(null);
-  const [dir, setDir] = useState(1); // 1 = forward, -1 = back
+  const [direction, setDirection] = useState(1);
   const timerRef = useRef(null);
 
-  function resetTimer() {
+  function startTimer() {
     clearInterval(timerRef.current);
-    timerRef.current = setInterval(advance, 5500);
-  }
-
-  function advance() {
-    setActiveIndex((cur) => {
-      setPrevIndex(cur);
-      setDir(1);
-      return (cur + 1) % bannerSlides.length;
-    });
+    timerRef.current = setInterval(() => {
+      setDirection(1);
+      setActiveIndex(
+        (currentIndex) => (currentIndex + 1) % bannerSlides.length,
+      );
+    }, 6500);
   }
 
   useEffect(() => {
-    timerRef.current = setInterval(advance, 5500);
+    startTimer();
     return () => clearInterval(timerRef.current);
   }, []);
 
-  function goTo(idx) {
-    if (idx === activeIndex) return;
-    setDir(idx > activeIndex ? 1 : -1);
-    setPrevIndex(activeIndex);
-    setActiveIndex(idx);
-    resetTimer();
+  function goTo(index) {
+    if (index === activeIndex) return;
+    setDirection(index > activeIndex ? 1 : -1);
+    setActiveIndex(index);
+    startTimer();
   }
 
   function prev() {
-    goTo(activeIndex === 0 ? bannerSlides.length - 1 : activeIndex - 1);
+    const nextIndex =
+      activeIndex === 0 ? bannerSlides.length - 1 : activeIndex - 1;
+    setDirection(-1);
+    goTo(nextIndex);
   }
+
   function next() {
+    setDirection(1);
     goTo((activeIndex + 1) % bannerSlides.length);
   }
 
+  function runAction(action) {
+    if (!action || !onSlideAction) return;
+    onSlideAction(action);
+  }
+
   return (
-    <section className="hero-carousel-section" aria-label="Featured product promotions">
-      {/* Full-bleed stage — image IS the background */}
-      <div className="hero-carousel">
+    <section
+      className="hero-carousel-section"
+      aria-label="Featured product promotions"
+    >
+      <div className="hero-carousel" style={{ "--slide-direction": direction }}>
         <div className="hero-carousel-stage">
-          {bannerSlides.map((slide, index) => (
-            <button
-              key={slide.id}
-              className={`carousel-slide-button ${index === activeIndex ? 'is-active' : ''}`}
-              type="button"
-              onClick={() => onSlideAction(slide.action)}
-              aria-label={slide.actionLabel}
-              tabIndex={index === activeIndex ? 0 : -1}
-            >
-              <img
-                src={slide.image}
-                alt={slide.alt}
-                loading={index === 0 ? 'eager' : 'lazy'}
-                decoding="async"
-                fetchPriority={index === 0 ? 'high' : 'auto'}
-              />
-            </button>
-          ))}
+          {bannerSlides.map((slide, index) => {
+            const isActive = index === activeIndex;
+            const priceInfo = getDisplayPriceFromPriceSet(
+              slide.prices,
+              customerMarket,
+            );
+
+            return (
+              <article
+                key={slide.id}
+                className={`carousel-slide ${isActive ? "is-active" : ""} content-${slide.contentSide} theme-${slide.theme}`}
+                aria-hidden={!isActive}
+              >
+                <img
+                  className="carousel-slide-image"
+                  src={slide.image}
+                  alt={slide.alt}
+                  loading={index === 0 ? "eager" : "lazy"}
+                  decoding="async"
+                  fetchPriority={index === 0 ? "high" : "auto"}
+                />
+
+                <div className="carousel-copy-wrap">
+                  <div className="carousel-copy-card">
+                    <p className="carousel-eyebrow">{slide.eyebrow}</p>
+                    <h1>{slide.title}</h1>
+
+                    <div
+                      className="carousel-meta-row"
+                      aria-label="Product information"
+                    >
+                      <span>{slide.detail}</span>
+                      <span className="carousel-price-pill">
+                        {priceInfo.priceText}
+                      </span>
+                      {priceInfo.hasDiscount ? (
+                        <span className="carousel-was-pill">
+                          Was {priceInfo.originalPriceText}
+                        </span>
+                      ) : null}
+                    </div>
+
+                    <p className="carousel-subtitle">{slide.subtitle}</p>
+                    <p className="carousel-trust-line">{slide.trustLine}</p>
+
+                    <div className="carousel-actions">
+                      <button
+                        className="carousel-primary-btn"
+                        type="button"
+                        onClick={() => runAction(slide.primaryAction)}
+                      >
+                        {slide.cta}
+                      </button>
+
+                      <button
+                        className="carousel-secondary-btn"
+                        type="button"
+                        onClick={() => runAction(slide.secondaryAction)}
+                      >
+                        {slide.secondaryCta}
+                        <svg
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.4"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          aria-hidden="true"
+                        >
+                          <path d="M5 12h14" />
+                          <path d="m13 6 6 6-6 6" />
+                        </svg>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            );
+          })}
         </div>
 
-        {/* Left arrow — slim, translucent, Amazon-style */}
         <button
           className="carousel-arrow carousel-arrow-left"
           type="button"
-          aria-label="Previous"
+          aria-label="Previous banner"
           onClick={prev}
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M15 18l-6-6 6-6"/>
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>
 
         <button
           className="carousel-arrow carousel-arrow-right"
           type="button"
-          aria-label="Next"
+          aria-label="Next banner"
           onClick={next}
         >
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M9 18l6-6-6-6"/>
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+          >
+            <path d="M9 18l6-6-6-6" />
           </svg>
         </button>
 
-        {/* Dot nav — bottom-centre */}
-        <nav className="carousel-dots" aria-label="Slide navigation">
+        <nav className="carousel-dots" aria-label="Banner slide navigation">
           {bannerSlides.map((slide, index) => (
             <button
               key={slide.id}
-              className={`carousel-dot ${index === activeIndex ? 'active' : ''}`}
+              className={`carousel-dot ${index === activeIndex ? "active" : ""}`}
               type="button"
-              aria-label={`Go to slide ${index + 1}`}
-              aria-current={index === activeIndex}
+              aria-label={`Go to ${slide.title} banner ${index + 1}`}
+              aria-current={index === activeIndex ? "true" : undefined}
               onClick={() => goTo(index)}
             />
           ))}

@@ -10164,186 +10164,377 @@ button.promo-product-chip:hover {
    so they are not touched — those contexts are not specifically WhatsApp */
 
 /* ============================================================
-   HERO CAROUSEL — Amazon-style, full-bleed, no card border
-   
-   Design: image IS the full background, zero padding around it.
-   Left/right gradient fades give the arrows room and match the 
-   page bg so edges look intentional not clipped.
-   Arrows are translucent frosted-glass pills, Amazon-style.
-   Dots are bottom-centre on a dark pill backdrop.
+   HERO CAROUSEL — smooth product banner slider
+
+   The uploaded banner image stays untouched as the full background.
+   Text is placed only on the clean empty side using each slide's
+   content-left / content-right class so it does not cover the product.
    ============================================================ */
 
 .hero-carousel-section {
   position: relative;
   width: 100%;
   overflow: hidden;
-  /* No padding, margin, or radius — edge-to-edge like Amazon */
   background: var(--surface);
 }
 
-/* ── Stage: full-width, aspect-locked ── */
 .hero-carousel {
   position: relative;
   width: 100%;
+  isolation: isolate;
 }
 
 .hero-carousel-stage {
   position: relative;
   width: 100%;
-  aspect-ratio: 1916 / 821; /* exact banner dimensions */
+  height: clamp(360px, 40vw, 560px);
   background: var(--img-bg);
   overflow: hidden;
 }
 
-/* Left/right edge gradient fades — blend into page background */
 .hero-carousel-stage::before,
 .hero-carousel-stage::after {
   content: "";
   position: absolute;
   top: 0;
   bottom: 0;
-  width: 64px;
-  z-index: 4;
+  width: clamp(38px, 5vw, 88px);
+  z-index: 5;
   pointer-events: none;
 }
-/* Banners are light cream → transparent fade looks seamless in light mode.
-   In dark mode the carousel is full-width so edges hit the page edge directly
-   — we just soften with a very subtle dark shadow, not a solid bg fill. */
+
 .hero-carousel-stage::before {
   left: 0;
-  background: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0.08) 0%,
-    transparent 100%
-  );
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.1), transparent);
 }
+
 .hero-carousel-stage::after {
   right: 0;
-  background: linear-gradient(
-    to left,
-    rgba(0, 0, 0, 0.08) 0%,
-    transparent 100%
-  );
-}
-/* Light mode: even softer shadow since banners are already light */
-.page[data-mode="light"] .hero-carousel-stage::before {
-  background: linear-gradient(
-    to right,
-    rgba(0, 0, 0, 0.04) 0%,
-    transparent 100%
-  );
-}
-.page[data-mode="light"] .hero-carousel-stage::after {
-  background: linear-gradient(
-    to left,
-    rgba(0, 0, 0, 0.04) 0%,
-    transparent 100%
-  );
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.1), transparent);
 }
 
-/* ── Each slide ── */
-.carousel-slide-button {
+.carousel-slide {
   position: absolute;
   inset: 0;
-  width: 100%;
-  height: 100%;
-  border: 0;
-  padding: 0;
-  background: transparent;
-  cursor: pointer;
   overflow: hidden;
-
-  /* Hidden by default */
   opacity: 0;
-  transform: scale(1.015);
-  transition:
-    opacity 0.68s ease,
-    transform 0.88s ease;
   pointer-events: none;
+  transform: translate3d(calc(var(--slide-direction, 1) * 38px), 0, 0);
+  transition:
+    opacity 0.78s ease,
+    transform 1s cubic-bezier(0.22, 1, 0.36, 1);
   z-index: 1;
 }
-.carousel-slide-button.is-active {
+
+.carousel-slide.is-active {
   opacity: 1;
-  transform: scale(1);
   pointer-events: auto;
+  transform: translate3d(0, 0, 0);
   z-index: 2;
 }
 
-.carousel-slide-button img {
+.carousel-slide-image {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   display: block;
   object-fit: cover;
   object-position: center center;
+  transform: scale(1.04);
+  transition: transform 6.5s ease;
+  z-index: 1;
 }
 
-/* ── Arrows — Amazon frosted-glass pill style ── */
+.carousel-slide.is-active .carousel-slide-image {
+  transform: scale(1);
+}
+
+.carousel-copy-wrap {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  padding: clamp(20px, 5vw, 80px);
+}
+
+.carousel-slide.content-left .carousel-copy-wrap {
+  justify-content: flex-start;
+  padding-right: 50%;
+}
+
+.carousel-slide.content-right .carousel-copy-wrap {
+  justify-content: flex-end;
+  padding-left: 50%;
+}
+
+.carousel-copy-card {
+  width: min(460px, 100%);
+  color: #172235;
+  padding: clamp(18px, 2.4vw, 30px);
+  border-radius: var(--r-xl);
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255, 255, 255, 0.78),
+      rgba(255, 248, 232, 0.42)
+    ),
+    radial-gradient(circle at 0% 0%, rgba(255, 255, 255, 0.78), transparent 58%);
+  border: 1px solid rgba(255, 255, 255, 0.56);
+  box-shadow: 0 22px 60px rgba(24, 18, 8, 0.16);
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+  transform: translateY(18px);
+  opacity: 0;
+  transition:
+    opacity 0.72s ease 0.18s,
+    transform 0.82s cubic-bezier(0.22, 1, 0.36, 1) 0.18s;
+}
+
+.carousel-slide.is-active .carousel-copy-card {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.carousel-slide.theme-honey-dark .carousel-copy-card {
+  color: #fff7e7;
+  background:
+    linear-gradient(135deg, rgba(43, 23, 7, 0.8), rgba(117, 67, 19, 0.46)),
+    radial-gradient(circle at 0% 0%, rgba(255, 204, 112, 0.22), transparent 60%);
+  border-color: rgba(255, 220, 155, 0.25);
+  box-shadow: 0 26px 70px rgba(39, 18, 3, 0.34);
+}
+
+.carousel-slide.theme-honey-dark .carousel-subtitle,
+.carousel-slide.theme-honey-dark .carousel-trust-line {
+  color: rgba(255, 247, 231, 0.86);
+}
+
+.carousel-eyebrow {
+  margin: 0 0 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  line-height: 1.1;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+}
+
+.carousel-eyebrow::before {
+  content: "";
+  width: 30px;
+  height: 2px;
+  border-radius: var(--r-pill);
+  background: currentColor;
+}
+
+.theme-honey-dark .carousel-eyebrow {
+  color: #ffd68b;
+}
+
+.carousel-copy-card h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(38px, 5vw, 74px);
+  line-height: 0.92;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: inherit;
+}
+
+.carousel-meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.carousel-meta-row span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 7px 13px;
+  border-radius: var(--r-pill);
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid rgba(22, 48, 79, 0.1);
+  color: var(--primary);
+  font-weight: 800;
+  line-height: 1;
+}
+
+.carousel-meta-row span:last-child {
+  color: var(--on-accent);
+  background: linear-gradient(135deg, var(--accent), #f4d47e);
+  border-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  box-shadow: 0 12px 28px color-mix(in srgb, var(--accent) 26%, transparent);
+}
+
+.theme-honey-dark .carousel-meta-row span {
+  color: #fff6e6;
+  background: rgba(255, 255, 255, 0.13);
+  border-color: rgba(255, 255, 255, 0.18);
+}
+
+.theme-honey-dark .carousel-meta-row span:last-child {
+  color: #281100;
+  background: linear-gradient(135deg, #ffd06e, var(--accent));
+}
+
+.carousel-subtitle {
+  margin: 18px 0 0;
+  max-width: 38ch;
+  color: rgba(23, 34, 53, 0.78);
+  font-size: clamp(15px, 1.35vw, 19px);
+  line-height: 1.48;
+  font-weight: 600;
+}
+
+.carousel-trust-line {
+  margin: 12px 0 0;
+  color: rgba(23, 34, 53, 0.66);
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.carousel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.carousel-primary-btn,
+.carousel-secondary-btn {
+  border: 0;
+  font-family: var(--font-body);
+  font-weight: 800;
+  cursor: pointer;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease,
+    color 0.18s ease;
+}
+
+.carousel-primary-btn {
+  min-height: 46px;
+  padding: 13px 26px;
+  border-radius: var(--r-pill);
+  background: var(--primary);
+  color: var(--on-primary);
+  box-shadow: 0 14px 30px rgba(15, 31, 50, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.carousel-primary-btn:hover {
+  transform: translateY(-2px);
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: 0 18px 34px color-mix(in srgb, var(--accent) 32%, transparent);
+}
+
+.carousel-secondary-btn {
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 0;
+  background: transparent;
+  color: currentColor;
+  opacity: 0.82;
+}
+
+.carousel-secondary-btn svg {
+  width: 18px;
+  height: 18px;
+  transition: transform 0.18s ease;
+}
+
+.carousel-secondary-btn:hover {
+  opacity: 1;
+  color: var(--accent-deep);
+}
+
+.carousel-secondary-btn:hover svg {
+  transform: translateX(4px);
+}
+
 .carousel-arrow {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  z-index: 10;
-
-  /* Shape */
-  width: 38px;
+  z-index: 12;
+  width: 40px;
   height: 72px;
   border: 0;
-  border-radius: 0 6px 6px 0;
   padding: 0;
-
-  /* Style */
-  background: rgba(20, 18, 14, 0.46);
+  background: rgba(20, 18, 14, 0.42);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   color: #fff;
-
-  /* Layout */
   display: grid;
   place-items: center;
   cursor: pointer;
-
+  opacity: 0;
   transition:
+    opacity 0.22s ease,
     background-color 0.18s ease,
     width 0.18s ease,
     transform 0.18s ease;
 }
+
+.hero-carousel:hover .carousel-arrow,
+.hero-carousel:focus-within .carousel-arrow {
+  opacity: 1;
+}
+
 .carousel-arrow svg {
   width: 22px;
   height: 22px;
   flex: none;
 }
+
 .carousel-arrow:hover {
   background: rgba(20, 18, 14, 0.72);
-  width: 44px;
+  width: 46px;
 }
+
 .carousel-arrow:active {
   transform: translateY(-50%) scale(0.96);
 }
+
 .carousel-arrow-left {
   left: 0;
-  border-radius: 0 6px 6px 0;
-}
-.carousel-arrow-right {
-  right: 0;
-  border-radius: 6px 0 0 6px;
+  border-radius: 0 8px 8px 0;
 }
 
-/* ── Dot navigation ── */
+.carousel-arrow-right {
+  right: 0;
+  border-radius: 8px 0 0 8px;
+}
+
 .carousel-dots {
   position: absolute;
-  bottom: 14px;
+  bottom: 16px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 10;
+  z-index: 12;
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
+  gap: 7px;
+  padding: 7px 11px;
   border-radius: var(--r-pill);
-  background: rgba(14, 12, 10, 0.38);
+  background: rgba(14, 12, 10, 0.36);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .carousel-dot {
@@ -10351,7 +10542,7 @@ button.promo-product-chip:hover {
   height: 8px;
   border: 0;
   border-radius: var(--r-pill);
-  background: rgba(255, 255, 255, 0.55);
+  background: rgba(255, 255, 255, 0.58);
   cursor: pointer;
   padding: 0;
   transition:
@@ -10359,58 +10550,133 @@ button.promo-product-chip:hover {
     background 0.24s ease,
     transform 0.18s ease;
 }
+
 .carousel-dot:hover {
   transform: scale(1.15);
 }
+
 .carousel-dot.active {
-  width: 24px;
+  width: 26px;
   background: var(--accent);
-  box-shadow: 0 0 8px color-mix(in srgb, var(--accent) 50%, transparent);
+  box-shadow: 0 0 9px color-mix(in srgb, var(--accent) 55%, transparent);
 }
 
-/* ── Responsive ── */
-@media (max-width: 760px) {
+@media (max-width: 980px) {
   .hero-carousel-stage {
-    aspect-ratio: 1916 / 821;
+    height: clamp(350px, 48vw, 460px);
   }
+
+  .carousel-slide.content-left .carousel-copy-wrap {
+    padding-right: 42%;
+  }
+
+  .carousel-slide.content-right .carousel-copy-wrap {
+    padding-left: 42%;
+  }
+
+  .carousel-copy-card {
+    width: min(390px, 100%);
+  }
+}
+
+@media (max-width: 720px) {
+  .hero-carousel-stage {
+    height: 390px;
+  }
+
+  .carousel-slide-image {
+    object-position: center center;
+  }
+
+  .carousel-copy-wrap {
+    padding: 18px;
+    align-items: flex-end;
+  }
+
+  .carousel-slide.content-left .carousel-copy-wrap,
+  .carousel-slide.content-right .carousel-copy-wrap {
+    justify-content: center;
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+
+  .carousel-copy-card {
+    width: min(100%, 460px);
+    padding: 16px;
+    border-radius: var(--r-lg);
+  }
+
+  .carousel-copy-card h1 {
+    font-size: clamp(30px, 10vw, 44px);
+  }
+
+  .carousel-subtitle {
+    font-size: 14px;
+    max-width: 100%;
+  }
+
+  .carousel-trust-line,
+  .carousel-secondary-btn {
+    display: none;
+  }
+
+  .carousel-primary-btn {
+    min-height: 42px;
+    padding: 11px 20px;
+  }
+
   .carousel-arrow {
-    width: 32px;
-    height: 56px;
+    display: none;
   }
-  .carousel-arrow:hover {
-    width: 36px;
-  }
-  .carousel-arrow svg {
-    width: 18px;
-    height: 18px;
-  }
+
   .carousel-dots {
     bottom: 8px;
     padding: 5px 8px;
   }
+
   .carousel-dot {
     width: 7px;
     height: 7px;
   }
+
   .carousel-dot.active {
     width: 18px;
   }
-  .hero-carousel-stage::before,
-  .hero-carousel-stage::after {
-    width: 32px;
-  }
-}
 
-@media (max-width: 480px) {
-  .carousel-arrow {
-    display: none;
-  }
   .hero-carousel-stage::before,
   .hero-carousel-stage::after {
     display: none;
   }
 }
 
+@media (max-width: 440px) {
+  .hero-carousel-stage {
+    height: 360px;
+  }
+
+  .carousel-eyebrow {
+    margin-bottom: 8px;
+    font-size: 10px;
+  }
+
+  .carousel-meta-row {
+    margin-top: 12px;
+  }
+
+  .carousel-meta-row span {
+    min-height: 30px;
+    padding: 6px 10px;
+    font-size: 12px;
+  }
+
+  .carousel-subtitle {
+    margin-top: 12px;
+  }
+
+  .carousel-actions {
+    margin-top: 16px;
+  }
+}
 /* ============================================================
    TRANSPARENT PRODUCT IMAGES — theme-aware backgrounds
    
@@ -11238,4 +11504,2274 @@ button:disabled {
   .summary-total {
     gap: 10px;
   }
+}
+
+.carousel-price-pill {
+  font-weight: 900;
+}
+
+.carousel-was-pill {
+  text-decoration: line-through;
+  opacity: 0.72;
+  font-size: 0.9em;
+}
+
+.carousel-meta-row .carousel-was-pill {
+  background: rgba(255, 255, 255, 0.52);
+  color: rgba(23, 34, 53, 0.7);
+}
+
+.theme-honey-dark .carousel-meta-row .carousel-was-pill {
+  color: rgba(255, 247, 231, 0.72);
+  background: rgba(255, 255, 255, 0.12);
+}
+
+/* ============================================================
+   LIGHT MODE FIX — Trust / Human Support text visibility
+   ============================================================ */
+
+.page[data-mode="light"] .trust-section-intro {
+  --trust-divider-fill: color-mix(in srgb, var(--surface) 94%, white);
+  --trust-title-shadow: rgba(22, 48, 79, 0.18);
+}
+
+.page[data-mode="light"] .trust-copy-lead {
+  color: color-mix(in srgb, var(--text) 90%, var(--muted) 10%);
+  opacity: 1;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.18);
+}
+
+.page[data-mode="light"] .trust-proof-line {
+  border-top: 1px solid color-mix(in srgb, var(--primary) 18%, transparent);
+}
+
+.page[data-mode="light"] .trust-proof-line strong {
+  color: var(--text);
+}
+
+.page[data-mode="light"] .trust-proof-line p {
+  color: color-mix(in srgb, var(--text) 82%, var(--muted) 18%);
+  opacity: 1;
+}
+
+.page[data-mode="light"] .trust-proof-icon {
+  background: color-mix(in srgb, var(--accent) 16%, white);
+  border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+}
+
+.page[data-mode="light"] .trust-section-intro::after {
+  background: linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.02),
+    rgba(255, 255, 255, 0.12)
+  );
+}
+
+/* ============================================================
+   LIGHT MODE — Trust text card background + stronger text
+   Only affects the paragraph and first-time buyers block
+   ============================================================ */
+
+.page[data-mode="light"] .trust-copy-lead {
+  max-width: 820px;
+  padding: clamp(18px, 2.2vw, 26px) clamp(22px, 3vw, 34px);
+  border-radius: var(--r-xl);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--card) 96%, var(--surface) 4%),
+    color-mix(in srgb, var(--surface) 78%, white 22%)
+  );
+  border: 1px solid color-mix(in srgb, var(--primary) 14%, transparent);
+  box-shadow: 0 18px 44px rgba(22, 48, 79, 0.14);
+  color: color-mix(in srgb, var(--text) 94%, var(--primary) 6%);
+  font-weight: 800;
+  opacity: 1;
+}
+
+.page[data-mode="light"] .trust-proof-line {
+  max-width: 820px;
+  padding: clamp(18px, 2vw, 24px);
+  border-radius: var(--r-xl);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--card) 94%, var(--surface) 6%),
+    color-mix(in srgb, var(--surface) 82%, white 18%)
+  );
+  border: 1px solid color-mix(in srgb, var(--primary) 14%, transparent);
+  box-shadow: 0 18px 44px rgba(22, 48, 79, 0.14);
+}
+
+.page[data-mode="light"] .trust-proof-line strong {
+  color: color-mix(in srgb, var(--text) 92%, var(--primary) 8%);
+  font-weight: 900;
+}
+
+.page[data-mode="light"] .trust-proof-line p {
+  color: color-mix(in srgb, var(--text) 88%, var(--primary) 12%);
+  font-weight: 750;
+  opacity: 1;
+}
+
+.page[data-mode="light"] .trust-proof-icon {
+  background: color-mix(in srgb, var(--accent) 18%, var(--card));
+  border-color: color-mix(in srgb, var(--accent) 46%, transparent);
+  box-shadow: 0 10px 24px rgba(201, 154, 59, 0.2);
+}
+
+/* ============================================================
+   CONTACT PAGE — premium WhatsApp contact section
+   Uses existing project variables, fonts, colors, and themes.
+   ============================================================ */
+
+.contact-page {
+  min-height: 100%;
+  background: var(--bg);
+}
+
+.contact-section-bg {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background:
+    radial-gradient(
+      circle at 12% 20%,
+      color-mix(in srgb, var(--accent) 24%, transparent),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 88% 18%,
+      color-mix(in srgb, var(--primary) 34%, transparent),
+      transparent 34%
+    ),
+    linear-gradient(135deg, var(--footer-bg), var(--primary) 58%, var(--bg));
+}
+
+.contact-section-bg::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background-image:
+    linear-gradient(
+      120deg,
+      color-mix(in srgb, var(--accent) 18%, transparent),
+      transparent 36%
+    ),
+    radial-gradient(
+      circle,
+      color-mix(in srgb, var(--on-primary) 24%, transparent) 1px,
+      transparent 1.4px
+    );
+  background-size:
+    auto,
+    34px 34px;
+  opacity: 0.3;
+}
+
+.contact-section-bg::after {
+  content: "";
+  position: absolute;
+  right: -12%;
+  bottom: -28%;
+  width: min(720px, 58vw);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  z-index: -1;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--accent) 34%, transparent),
+    transparent 66%
+  );
+  filter: blur(8px);
+  opacity: 0.72;
+}
+
+.contact-overlay {
+  position: relative;
+  width: 100%;
+  min-height: calc(100vh - 130px);
+  padding: clamp(34px, 5vw, 72px) 0 clamp(64px, 8vw, 120px);
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--primary) 86%, transparent),
+    color-mix(in srgb, var(--footer-bg) 78%, transparent)
+  );
+}
+
+.contact-page-inner {
+  position: relative;
+  z-index: 2;
+}
+
+.contact-back-link {
+  color: var(--on-primary);
+  border-color: color-mix(in srgb, var(--on-primary) 24%, transparent);
+  background: color-mix(in srgb, var(--on-primary) 8%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.contact-back-link:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+}
+
+.contact-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(360px, 1fr);
+  gap: clamp(34px, 5vw, 74px);
+  align-items: center;
+}
+
+.contact-info-panel {
+  color: var(--on-primary);
+  padding: clamp(8px, 2vw, 20px) 0;
+}
+
+.contact-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: color-mix(in srgb, var(--accent) 90%, var(--on-primary));
+  margin-bottom: 18px;
+}
+
+.contact-eyebrow span {
+  width: 34px;
+  height: 34px;
+  border-radius: var(--r-pill);
+  display: inline-grid;
+  place-items: center;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 34%, transparent);
+}
+
+.contact-eyebrow svg {
+  width: 18px;
+  height: 18px;
+}
+
+.contact-title {
+  margin: 0;
+  max-width: 11ch;
+  font-family: var(--font-display);
+  font-size: clamp(48px, 7vw, 92px);
+  line-height: 0.9;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--on-primary);
+  text-shadow:
+    color-mix(in srgb, var(--footer-bg) 80%, #000) 1px 1px,
+    color-mix(in srgb, var(--footer-bg) 80%, #000) 2px 2px,
+    color-mix(in srgb, var(--footer-bg) 80%, #000) 3px 3px,
+    color-mix(in srgb, var(--footer-bg) 80%, #000) 4px 4px;
+}
+
+.contact-intro {
+  max-width: 58ch;
+  margin: clamp(22px, 3vw, 34px) 0 0;
+  color: color-mix(in srgb, var(--on-primary) 84%, var(--muted));
+  font-size: clamp(15px, 1.35vw, 18px);
+  line-height: 1.85;
+  font-weight: 650;
+}
+
+.contact-trust-row {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 24px;
+  padding: 12px 16px;
+  border-radius: var(--r-pill);
+  color: var(--on-primary);
+  background: color-mix(in srgb, var(--on-primary) 10%, transparent);
+  border: 1px solid color-mix(in srgb, var(--on-primary) 16%, transparent);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.14);
+}
+
+.contact-trust-row span {
+  width: 28px;
+  height: 28px;
+  display: inline-grid;
+  place-items: center;
+}
+
+.contact-trust-row svg {
+  width: 24px;
+  height: 24px;
+}
+
+.contact-trust-row strong {
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.contact-info-list {
+  list-style: none;
+  display: grid;
+  gap: 18px;
+  margin: clamp(30px, 4vw, 44px) 0 0;
+  padding: 0;
+}
+
+.contact-info-list li {
+  display: grid;
+  grid-template-columns: 52px 1fr;
+  gap: 16px;
+  align-items: start;
+  padding: 18px;
+  border-radius: var(--r-xl);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--on-primary) 12%, transparent),
+    color-mix(in srgb, var(--on-primary) 5%, transparent)
+  );
+  border: 1px solid color-mix(in srgb, var(--on-primary) 14%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.contact-info-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 18px;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 34%, transparent);
+}
+
+.contact-info-icon svg {
+  width: 25px;
+  height: 25px;
+}
+
+.contact-info-text span {
+  display: block;
+  margin-bottom: 4px;
+  color: color-mix(in srgb, var(--accent) 90%, var(--on-primary));
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.contact-info-text strong {
+  display: block;
+  color: var(--on-primary);
+  font-size: clamp(16px, 1.35vw, 19px);
+  line-height: 1.35;
+}
+
+.contact-info-text p {
+  margin: 7px 0 0;
+  color: color-mix(in srgb, var(--on-primary) 72%, var(--muted));
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.contact-form-panel {
+  position: relative;
+  min-width: 0;
+}
+
+.contact-form-panel::before {
+  content: "";
+  position: absolute;
+  top: 22px;
+  bottom: 22px;
+  left: 46px;
+  width: 100vw;
+  border-radius: var(--r-xl) 0 0 var(--r-xl);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--card-raised) 96%, var(--surface) 4%),
+    color-mix(in srgb, var(--surface) 88%, var(--card) 12%)
+  );
+  box-shadow: 10px 40px 70px rgba(0, 0, 0, 0.26);
+  pointer-events: none;
+}
+
+.contact-form-card {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 560px);
+  margin-left: auto;
+  padding: clamp(26px, 4vw, 46px);
+  border-radius: var(--r-xl);
+  background: var(--card-raised);
+  border: 1px solid color-mix(in srgb, var(--border) 74%, transparent);
+  box-shadow: var(--card-shadow);
+}
+
+.contact-form-heading {
+  margin-bottom: 26px;
+}
+
+.contact-form-heading h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(34px, 4vw, 54px);
+  line-height: 0.95;
+  font-weight: 400;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.contact-form-heading p:not(.eyebrow) {
+  margin: 12px 0 0;
+  color: var(--muted);
+  line-height: 1.65;
+  font-size: 14px;
+}
+
+.contact-form {
+  display: grid;
+  gap: 20px;
+}
+
+.contact-form label {
+  display: grid;
+  gap: 8px;
+  color: var(--text-soft);
+  font-size: 11.5px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  min-height: 54px;
+  border: 0;
+  border-bottom: 2px solid color-mix(in srgb, var(--border) 86%, transparent);
+  border-radius: 0;
+  background: transparent;
+  color: var(--text);
+  padding: 12px 0;
+  font-family: var(--font-body);
+  font-size: 15.5px;
+  font-weight: 700;
+  line-height: 1.5;
+  outline: none;
+  resize: vertical;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.contact-form textarea {
+  min-height: 118px;
+}
+
+.contact-form input::placeholder,
+.contact-form textarea::placeholder {
+  color: color-mix(in srgb, var(--text) 52%, var(--muted));
+  font-weight: 650;
+}
+
+.contact-form input:hover,
+.contact-form textarea:hover,
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-bottom-color: var(--accent);
+}
+
+.contact-submit-btn {
+  width: fit-content;
+  min-height: 52px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 18px;
+  border: 0;
+  border-radius: var(--r-pill);
+  padding: 14px 26px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  color: var(--on-accent);
+  background: linear-gradient(
+    135deg,
+    var(--accent),
+    color-mix(in srgb, var(--accent) 72%, white)
+  );
+  box-shadow: 0 16px 34px color-mix(in srgb, var(--accent) 32%, transparent);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease;
+}
+
+.contact-submit-btn span {
+  width: 22px;
+  height: 22px;
+  display: inline-grid;
+  place-items: center;
+}
+
+.contact-submit-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+.contact-submit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 20px 42px color-mix(in srgb, var(--accent) 42%, transparent);
+}
+
+.contact-submit-btn:active {
+  transform: translateY(0);
+}
+
+.page[data-mode="light"] .contact-section-bg {
+  background:
+    radial-gradient(
+      circle at 12% 20%,
+      color-mix(in srgb, var(--accent) 28%, transparent),
+      transparent 32%
+    ),
+    radial-gradient(
+      circle at 88% 18%,
+      color-mix(in srgb, var(--primary) 24%, transparent),
+      transparent 34%
+    ),
+    linear-gradient(
+      135deg,
+      var(--primary),
+      color-mix(in srgb, var(--primary) 72%, var(--surface)) 58%,
+      var(--surface)
+    );
+}
+
+.page[data-mode="light"] .contact-overlay {
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--primary) 88%, transparent),
+    color-mix(in srgb, var(--primary) 58%, transparent)
+  );
+}
+
+.page[data-mode="light"] .contact-form-panel::before {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--card) 96%, white 4%),
+    color-mix(in srgb, var(--surface) 82%, white 18%)
+  );
+}
+
+@media (max-width: 980px) {
+  .contact-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-title {
+    max-width: 100%;
+  }
+
+  .contact-form-card {
+    width: 100%;
+  }
+
+  .contact-form-panel::before {
+    left: 0;
+    right: 0;
+    width: auto;
+    border-radius: var(--r-xl);
+  }
+}
+
+@media (max-width: 640px) {
+  .contact-overlay {
+    padding-top: 28px;
+  }
+
+  .contact-info-list li {
+    grid-template-columns: 44px 1fr;
+    padding: 15px;
+  }
+
+  .contact-info-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 15px;
+  }
+
+  .contact-info-icon svg {
+    width: 22px;
+    height: 22px;
+  }
+
+  .contact-trust-row {
+    align-items: flex-start;
+    border-radius: var(--r-lg);
+  }
+
+  .contact-form-card {
+    padding: 22px;
+  }
+
+  .contact-submit-btn {
+    width: 100%;
+  }
+}
+
+/* ============================================================
+   CONTACT PAGE UPDATE — store selector + map card
+   ============================================================ */
+
+.contact-form select {
+  width: 100%;
+  min-height: 54px;
+  border: 0;
+  border-bottom: 2px solid color-mix(in srgb, var(--border) 86%, transparent);
+  border-radius: 0;
+  background: linear-gradient(135deg, transparent, transparent), transparent;
+  color: var(--text);
+  padding: 12px 38px 12px 0;
+  font-family: var(--font-body);
+  font-size: 15.5px;
+  font-weight: 800;
+  line-height: 1.5;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--accent) 50%),
+    linear-gradient(135deg, var(--accent) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) 52%,
+    calc(100% - 12px) 52%;
+  background-size:
+    6px 6px,
+    6px 6px;
+  background-repeat: no-repeat;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.contact-form select:hover,
+.contact-form select:focus {
+  border-bottom-color: var(--accent);
+}
+
+.contact-form select option {
+  color: #121a26;
+  background: #ffffff;
+  font-weight: 700;
+}
+
+.contact-map-card {
+  position: relative;
+  margin-top: clamp(28px, 4vw, 44px);
+  padding: 16px;
+  border-radius: var(--r-xl);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--surface) 82%, var(--card) 18%),
+    color-mix(in srgb, var(--card) 92%, var(--surface) 8%)
+  );
+  border: 1px solid color-mix(in srgb, var(--border) 78%, transparent);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.14);
+  overflow: hidden;
+}
+
+.contact-map-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+
+.contact-map-heading .eyebrow {
+  margin-bottom: 6px;
+}
+
+.contact-map-heading h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(24px, 3vw, 34px);
+  line-height: 0.95;
+  font-weight: 400;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.contact-map-heading a {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 9px 14px;
+  border-radius: var(--r-pill);
+  color: var(--on-accent);
+  background: var(--accent);
+  font-size: 12px;
+  font-weight: 900;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 12px 24px color-mix(in srgb, var(--accent) 26%, transparent);
+}
+
+.contact-map-heading a:hover {
+  transform: translateY(-1px);
+}
+
+.contact-map-card iframe {
+  width: 100%;
+  height: clamp(230px, 30vw, 330px);
+  display: block;
+  border: 0;
+  border-radius: var(--r-lg);
+  filter: saturate(1.05) contrast(1.02);
+}
+
+.contact-map-pin {
+  position: absolute;
+  left: 50%;
+  top: calc(50% + 22px);
+  z-index: 3;
+  width: 46px;
+  height: 46px;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  color: var(--on-accent);
+  background: var(--accent);
+  border: 4px solid color-mix(in srgb, var(--card) 92%, white 8%);
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.28),
+    0 0 0 10px color-mix(in srgb, var(--accent) 18%, transparent);
+  text-decoration: none;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.contact-map-pin:hover {
+  transform: translate(-50%, -54%);
+  box-shadow:
+    0 18px 34px rgba(0, 0, 0, 0.34),
+    0 0 0 13px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.contact-map-pin svg {
+  width: 23px;
+  height: 23px;
+}
+
+.contact-map-card > p {
+  margin: 12px 2px 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 750;
+  line-height: 1.5;
+}
+
+.page[data-mode="light"] .contact-map-card {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--card) 94%, white 6%),
+    color-mix(in srgb, var(--surface) 84%, white 16%)
+  );
+  box-shadow: 0 18px 38px rgba(22, 48, 79, 0.14);
+}
+
+@media (max-width: 640px) {
+  .contact-map-heading {
+    flex-direction: column;
+  }
+
+  .contact-map-heading a {
+    width: 100%;
+  }
+
+  .contact-map-pin {
+    top: calc(50% + 42px);
+  }
+}
+
+/* ============================================================
+   CONTACT PAGE FINAL UPDATE
+   Store selector + map between contact section and footer
+   ============================================================ */
+
+.contact-form select {
+  width: 100%;
+  min-height: 54px;
+  border: 0;
+  border-bottom: 2px solid color-mix(in srgb, var(--border) 86%, transparent);
+  border-radius: 0;
+  background: transparent;
+  color: var(--text);
+  padding: 12px 38px 12px 0;
+  font-family: var(--font-body);
+  font-size: 15.5px;
+  font-weight: 800;
+  line-height: 1.5;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--accent) 50%),
+    linear-gradient(135deg, var(--accent) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) 52%,
+    calc(100% - 12px) 52%;
+  background-size:
+    6px 6px,
+    6px 6px;
+  background-repeat: no-repeat;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.contact-form select:hover,
+.contact-form select:focus {
+  border-bottom-color: var(--accent);
+}
+
+.contact-form select option {
+  color: #121a26;
+  background: #ffffff;
+  font-weight: 700;
+}
+
+/* Remove old inside-form map spacing if previous CSS exists */
+.contact-form-card > .contact-map-card {
+  display: none;
+}
+
+/* Map section now sits between Contact section and Footer */
+.contact-map-section {
+  position: relative;
+  background: var(--bg);
+  padding: clamp(20px, 3vw, 36px) 0 clamp(36px, 5vw, 64px);
+}
+
+.contact-map-section::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      circle at 20% 0%,
+      color-mix(in srgb, var(--accent) 14%, transparent),
+      transparent 34%
+    ),
+    radial-gradient(
+      circle at 82% 20%,
+      color-mix(in srgb, var(--primary) 12%, transparent),
+      transparent 36%
+    );
+}
+
+.contact-map-section .wrap {
+  position: relative;
+  z-index: 2;
+}
+
+.contact-map-card {
+  position: relative;
+  margin-top: 0;
+  padding: clamp(16px, 2.5vw, 24px);
+  border-radius: var(--r-xl);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--surface) 82%, var(--card) 18%),
+    color-mix(in srgb, var(--card) 92%, var(--surface) 8%)
+  );
+  border: 1px solid color-mix(in srgb, var(--border) 78%, transparent);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.14);
+  overflow: hidden;
+}
+
+.contact-map-card-wide {
+  max-width: 1180px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.contact-map-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.contact-map-heading .eyebrow {
+  margin-bottom: 6px;
+}
+
+.contact-map-heading h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(26px, 3vw, 42px);
+  line-height: 0.95;
+  font-weight: 400;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+.contact-map-heading a {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 10px 16px;
+  border-radius: var(--r-pill);
+  color: var(--on-accent);
+  background: var(--accent);
+  font-size: 12px;
+  font-weight: 900;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  box-shadow: 0 12px 24px color-mix(in srgb, var(--accent) 26%, transparent);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.contact-map-heading a:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 30px color-mix(in srgb, var(--accent) 34%, transparent);
+}
+
+.contact-map-frame-wrap {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--r-lg);
+  background: var(--img-bg);
+  border: 1px solid color-mix(in srgb, var(--border) 70%, transparent);
+}
+
+.contact-map-frame-wrap iframe {
+  width: 100%;
+  height: clamp(280px, 38vw, 430px);
+  display: block;
+  border: 0;
+  filter: saturate(1.05) contrast(1.02);
+}
+
+.contact-map-pin {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 3;
+  width: 48px;
+  height: 48px;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  color: var(--on-accent);
+  background: var(--accent);
+  border: 4px solid color-mix(in srgb, var(--card) 92%, white 8%);
+  box-shadow:
+    0 14px 28px rgba(0, 0, 0, 0.28),
+    0 0 0 10px color-mix(in srgb, var(--accent) 18%, transparent);
+  text-decoration: none;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.contact-map-pin:hover {
+  transform: translate(-50%, -56%);
+  box-shadow:
+    0 18px 34px rgba(0, 0, 0, 0.34),
+    0 0 0 13px color-mix(in srgb, var(--accent) 22%, transparent);
+}
+
+.contact-map-pin svg {
+  width: 23px;
+  height: 23px;
+}
+
+.contact-map-card > p {
+  margin: 14px 2px 0;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 750;
+  line-height: 1.5;
+}
+
+.page[data-mode="light"] .contact-map-section {
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--surface) 72%, var(--bg) 28%),
+    var(--bg)
+  );
+}
+
+.page[data-mode="light"] .contact-map-card {
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--card) 94%, white 6%),
+    color-mix(in srgb, var(--surface) 84%, white 16%)
+  );
+  box-shadow: 0 18px 38px rgba(22, 48, 79, 0.14);
+}
+
+@media (max-width: 640px) {
+  .contact-map-heading {
+    flex-direction: column;
+  }
+
+  .contact-map-heading a {
+    width: 100%;
+  }
+
+  .contact-map-frame-wrap iframe {
+    height: 300px;
+  }
+
+  .contact-map-pin {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* ============================================================
+   CONTACT MAP FINAL — full-width, no card, closer default zoom
+   ============================================================ */
+
+.contact-form select {
+  width: 100%;
+  min-height: 54px;
+  border: 0;
+  border-bottom: 2px solid color-mix(in srgb, var(--border) 86%, transparent);
+  border-radius: 0;
+  background: transparent;
+  color: var(--text);
+  padding: 12px 38px 12px 0;
+  font-family: var(--font-body);
+  font-size: 15.5px;
+  font-weight: 800;
+  line-height: 1.5;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--accent) 50%),
+    linear-gradient(135deg, var(--accent) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) 52%,
+    calc(100% - 12px) 52%;
+  background-size:
+    6px 6px,
+    6px 6px;
+  background-repeat: no-repeat;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.contact-form select:hover,
+.contact-form select:focus {
+  border-bottom-color: var(--accent);
+}
+
+.contact-form select option {
+  color: #121a26;
+  background: #ffffff;
+  font-weight: 700;
+}
+
+.contact-form-card > .contact-map-card,
+.contact-map-section,
+.contact-map-card-wide {
+  display: none;
+}
+
+.contact-map-section-full {
+  position: relative;
+  width: 100%;
+  background: var(--bg);
+  overflow: hidden;
+}
+
+.contact-map-topbar {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 18px;
+  padding: clamp(24px, 4vw, 46px) clamp(18px, 5vw, 70px);
+  background:
+    radial-gradient(
+      circle at 18% 0%,
+      color-mix(in srgb, var(--accent) 18%, transparent),
+      transparent 34%
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--surface) 72%, var(--bg) 28%),
+      var(--bg)
+    );
+}
+
+.contact-map-topbar .eyebrow {
+  margin: 0 0 9px;
+  color: var(--accent);
+}
+
+.contact-map-topbar h2 {
+  margin: 0;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: clamp(36px, 5vw, 72px);
+  line-height: 0.9;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.contact-map-topbar a {
+  flex: 0 0 auto;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 19px;
+  border-radius: var(--r-pill);
+  color: var(--on-accent);
+  background: var(--accent);
+  font-size: 12px;
+  font-weight: 900;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  box-shadow: 0 14px 28px color-mix(in srgb, var(--accent) 28%, transparent);
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.contact-map-topbar a:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 18px 34px color-mix(in srgb, var(--accent) 38%, transparent);
+}
+
+.contact-full-map-wrap {
+  position: relative;
+  width: 100%;
+  height: clamp(360px, 58vw, 640px);
+  background: var(--img-bg);
+  overflow: hidden;
+}
+
+.contact-full-map-wrap iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  border: 0;
+  filter: saturate(1.08) contrast(1.04);
+}
+
+.contact-full-map-pin {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  z-index: 4;
+  width: 52px;
+  height: 52px;
+  transform: translate(-50%, -50%);
+  display: grid;
+  place-items: center;
+  border-radius: 0;
+  color: var(--on-accent);
+  background: var(--accent);
+  border: 4px solid color-mix(in srgb, var(--card) 92%, white 8%);
+  box-shadow:
+    0 16px 30px rgba(0, 0, 0, 0.3),
+    0 0 0 12px color-mix(in srgb, var(--accent) 20%, transparent);
+  text-decoration: none;
+  transition:
+    transform 0.18s ease,
+    box-shadow 0.18s ease;
+}
+
+.contact-full-map-pin:hover {
+  transform: translate(-50%, -58%);
+  box-shadow:
+    0 20px 38px rgba(0, 0, 0, 0.36),
+    0 0 0 15px color-mix(in srgb, var(--accent) 24%, transparent);
+}
+
+.contact-full-map-pin svg {
+  width: 25px;
+  height: 25px;
+}
+
+.contact-full-map-wrap address {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 5;
+  margin: 0;
+  padding: 15px clamp(18px, 5vw, 70px);
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--primary) 92%, transparent),
+    color-mix(in srgb, var(--primary) 72%, transparent)
+  );
+  color: var(--on-primary);
+  font-family: var(--font-body);
+  font-size: clamp(13px, 1.25vw, 16px);
+  font-style: normal;
+  font-weight: 800;
+  line-height: 1.45;
+  text-align: center;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.page[data-mode="light"] .contact-map-topbar {
+  background:
+    radial-gradient(
+      circle at 18% 0%,
+      color-mix(in srgb, var(--accent) 20%, transparent),
+      transparent 34%
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--surface) 76%, var(--bg) 24%),
+      var(--bg)
+    );
+}
+
+.page[data-mode="light"] .contact-full-map-wrap address {
+  background: linear-gradient(
+    90deg,
+    color-mix(in srgb, var(--primary) 92%, transparent),
+    color-mix(in srgb, var(--primary) 74%, transparent)
+  );
+}
+
+@media (max-width: 720px) {
+  .contact-map-topbar {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .contact-map-topbar a {
+    width: 100%;
+  }
+
+  .contact-full-map-wrap {
+    height: 390px;
+  }
+
+  .contact-full-map-pin {
+    width: 46px;
+    height: 46px;
+  }
+}
+
+/* ============================================================
+   CONTACT FINAL POLISH
+   Removes extra gap, adds store icon button, flag dropdown,
+   and removes duplicate footer underline on contact page.
+   ============================================================ */
+
+/* Remove unused white space between map and footer */
+.contact-page {
+  margin-bottom: 0;
+}
+
+.contact-map-section-full {
+  margin: 0;
+  padding: 0;
+  line-height: normal;
+}
+
+.contact-full-map-wrap {
+  margin: 0;
+}
+
+.contact-full-map-wrap address {
+  margin: 0;
+}
+
+/* The footer has two divider lines:
+   1. .footer-inner border-bottom
+   2. .footer-theme-bar border-top
+   This removes the second one only on the contact page. */
+.page:has(.contact-page) .site-footer {
+  margin-top: 0;
+}
+
+.page:has(.contact-page) .footer-theme-bar {
+  border-top: 0;
+  padding-top: 8px;
+}
+
+/* Dropdown flag layout */
+.contact-select-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.contact-selected-flag {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  z-index: 2;
+  transform: translateY(-50%);
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  font-size: 18px;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.contact-form select {
+  width: 100%;
+  min-height: 54px;
+  border: 0;
+  border-bottom: 2px solid color-mix(in srgb, var(--border) 86%, transparent);
+  border-radius: 0;
+  background: transparent;
+  color: var(--text);
+  padding: 12px 38px 12px 46px;
+  font-family: var(--font-body);
+  font-size: 15.5px;
+  font-weight: 800;
+  line-height: 1.5;
+  outline: none;
+  cursor: pointer;
+  appearance: none;
+  background-image:
+    linear-gradient(45deg, transparent 50%, var(--accent) 50%),
+    linear-gradient(135deg, var(--accent) 50%, transparent 50%);
+  background-position:
+    calc(100% - 18px) 52%,
+    calc(100% - 12px) 52%;
+  background-size:
+    6px 6px,
+    6px 6px;
+  background-repeat: no-repeat;
+  transition:
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.contact-form select:hover,
+.contact-form select:focus {
+  border-bottom-color: var(--accent);
+}
+
+.contact-form select option {
+  color: #121a26;
+  background: #ffffff;
+  font-weight: 800;
+}
+
+/* Store icon inside form button */
+.contact-submit-btn span {
+  width: 24px;
+  height: 24px;
+}
+
+.contact-submit-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+/* Make sure old map card styles do not create hidden gaps */
+.contact-form-card > .contact-map-card,
+.contact-map-section,
+.contact-map-card-wide {
+  display: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* If the older map CSS added bottom spacing, override it */
+.contact-map-section-full + .site-footer,
+.contact-page + .site-footer {
+  margin-top: 0 !important;
+}
+
+/* ============================================================
+   FAQ PAGE — split accordion design
+   Uses project settings, fonts, colors, and square edges.
+   ============================================================ */
+
+.faq-page-modern {
+  position: relative;
+  min-height: calc(100vh - 120px);
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 18% 18%,
+      color-mix(in srgb, var(--accent) 22%, transparent),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 82% 8%,
+      color-mix(in srgb, var(--primary) 24%, transparent),
+      transparent 34%
+    ),
+    linear-gradient(135deg, var(--footer-bg), var(--primary) 56%, var(--bg));
+  padding: clamp(30px, 5vw, 70px) 0 clamp(58px, 8vw, 118px);
+}
+
+.faq-page-bg {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--on-primary) 24%, transparent) 1px,
+    transparent 1.5px
+  );
+  background-size: 34px 34px;
+  opacity: 0.16;
+}
+
+.faq-page-shell {
+  position: relative;
+  z-index: 2;
+}
+
+.faq-back-link {
+  color: var(--on-primary);
+  border-color: color-mix(in srgb, var(--on-primary) 24%, transparent);
+  background: color-mix(in srgb, var(--on-primary) 8%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  margin-bottom: clamp(28px, 4vw, 46px);
+}
+
+.faq-back-link:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+}
+
+.faq-accordion-panel {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(320px, 0.95fr) minmax(360px, 1fr);
+  min-height: clamp(560px, 68vw, 680px);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--card-raised) 96%, var(--surface) 4%),
+    color-mix(in srgb, var(--surface) 88%, var(--card) 12%)
+  );
+  border: 1px solid color-mix(in srgb, var(--border) 74%, transparent);
+  border-radius: 0;
+  box-shadow: 0 34px 90px rgba(0, 0, 0, 0.28);
+  overflow: visible;
+}
+
+.faq-logo-holder {
+  position: relative;
+  min-height: 100%;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      circle at 50% 42%,
+      color-mix(in srgb, var(--accent) 20%, transparent),
+      transparent 31%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      color-mix(in srgb, var(--primary) 20%, transparent),
+      transparent 48%
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--surface) 88%, var(--bg) 12%),
+      color-mix(in srgb, var(--img-bg) 86%, var(--surface) 14%)
+    );
+  border-radius: 0;
+}
+
+.faq-visual {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 560px;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+}
+
+.faq-visual-orbit {
+  position: absolute;
+  border-radius: 999px;
+  border: 2px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  opacity: 0.65;
+}
+
+.faq-visual-orbit-one {
+  width: 520px;
+  height: 520px;
+  left: -180px;
+  top: 70px;
+}
+
+.faq-visual-orbit-two {
+  width: 360px;
+  height: 360px;
+  left: -80px;
+  top: 150px;
+  border-color: color-mix(in srgb, var(--primary) 24%, transparent);
+}
+
+.faq-visual-main {
+  position: relative;
+  width: min(410px, 86%);
+  height: 360px;
+  transform: translateX(-28px);
+}
+
+.faq-visual-screen {
+  position: absolute;
+  right: 0;
+  top: 46px;
+  width: 265px;
+  height: 178px;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--card) 94%, white 6%),
+    color-mix(in srgb, var(--surface) 72%, var(--card) 28%)
+  );
+  border: 2px solid color-mix(in srgb, var(--border) 78%, transparent);
+  border-radius: 0;
+  box-shadow: 0 22px 45px rgba(0, 0, 0, 0.18);
+}
+
+.faq-visual-screen-top {
+  height: 38px;
+  background: color-mix(in srgb, var(--primary) 88%, var(--accent) 12%);
+}
+
+.faq-visual-screen-line {
+  height: 10px;
+  margin-left: 24px;
+  background: color-mix(in srgb, var(--accent) 70%, var(--surface) 30%);
+}
+
+.faq-line-one {
+  width: 155px;
+  margin-top: 28px;
+}
+
+.faq-line-two {
+  width: 205px;
+  margin-top: 18px;
+  opacity: 0.72;
+}
+
+.faq-line-three {
+  width: 118px;
+  margin-top: 18px;
+  opacity: 0.55;
+}
+
+.faq-visual-person {
+  position: absolute;
+  left: 44px;
+  bottom: 28px;
+  width: 170px;
+  height: 250px;
+}
+
+.faq-person-head {
+  position: absolute;
+  left: 58px;
+  top: 0;
+  width: 58px;
+  height: 58px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 35%, #8b4c22 0 12px, transparent 13px),
+    #6f3d1c;
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
+}
+
+.faq-person-body {
+  position: absolute;
+  left: 34px;
+  top: 62px;
+  width: 110px;
+  height: 145px;
+  background: linear-gradient(
+    135deg,
+    var(--accent),
+    color-mix(in srgb, var(--accent) 64%, white 36%)
+  );
+  border-radius: 0;
+  transform: skewX(-5deg);
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.18);
+}
+
+.faq-person-arm {
+  position: absolute;
+  width: 78px;
+  height: 18px;
+  background: #7a451f;
+  top: 94px;
+  border-radius: 999px;
+}
+
+.faq-person-arm-left {
+  left: 0;
+  transform: rotate(-18deg);
+}
+
+.faq-person-arm-right {
+  right: -5px;
+  transform: rotate(24deg);
+}
+
+.faq-visual-box {
+  position: absolute;
+  left: 10px;
+  bottom: 0;
+  width: 118px;
+  height: 92px;
+  display: grid;
+  place-items: center;
+  color: var(--on-accent);
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--accent) 88%, white 12%),
+    color-mix(in srgb, var(--accent) 68%, var(--primary) 32%)
+  );
+  border-radius: 0;
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.2);
+}
+
+.faq-visual-box svg {
+  width: 42px;
+  height: 42px;
+}
+
+.faq-visual-card {
+  position: absolute;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 46px;
+  padding: 10px 14px;
+  border-radius: 0;
+  color: var(--text);
+  background: var(--card-raised);
+  border: 1px solid color-mix(in srgb, var(--border) 72%, transparent);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.18);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.faq-visual-card span {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+}
+
+.faq-visual-card svg {
+  width: 20px;
+  height: 20px;
+}
+
+.faq-visual-card-top {
+  top: 82px;
+  right: 44px;
+}
+
+.faq-visual-card-bottom {
+  bottom: 90px;
+  left: 46px;
+}
+
+.faq-holder {
+  padding: clamp(40px, 6vw, 76px) clamp(26px, 5vw, 64px);
+  background: var(--card-raised);
+  border-radius: 0;
+}
+
+.faq-page-eyebrow {
+  margin-bottom: 12px;
+  color: var(--accent);
+}
+
+.faq-heading {
+  margin: 0;
+  color: var(--text);
+  font-family: var(--font-display);
+  font-size: clamp(52px, 7vw, 86px);
+  line-height: 0.9;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.faq-page-intro {
+  max-width: 46ch;
+  margin: 18px 0 26px;
+  color: var(--muted);
+  font-size: 15px;
+  line-height: 1.7;
+  font-weight: 650;
+}
+
+.faq-details-list {
+  display: grid;
+}
+
+.faq-detail {
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 86%, transparent);
+  margin: 0;
+  padding: 0;
+  border-radius: 0;
+}
+
+.faq-summary {
+  position: relative;
+  min-height: 64px;
+  display: grid;
+  grid-template-columns: 36px 1fr 24px;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+  color: var(--text);
+  list-style: none;
+  cursor: pointer;
+  transition: color 0.18s ease;
+}
+
+.faq-summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-summary::after {
+  content: "";
+  width: 10px;
+  height: 10px;
+  justify-self: end;
+  border-right: 2px solid var(--accent);
+  border-bottom: 2px solid var(--accent);
+  transform: rotate(45deg) translateY(-3px);
+  transition: transform 0.18s ease;
+}
+
+.faq-detail[open] .faq-summary::after {
+  transform: rotate(225deg) translateY(-3px);
+}
+
+.faq-summary:hover,
+.faq-summary:focus {
+  color: var(--accent);
+  outline: none;
+}
+
+.faq-detail[open] > .faq-summary {
+  color: var(--text);
+  font-weight: 900;
+}
+
+.faq-question-icon {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent) 28%, transparent);
+  border-radius: 0;
+}
+
+.faq-question-icon svg {
+  width: 19px;
+  height: 19px;
+}
+
+.faq-question {
+  display: block;
+  color: inherit;
+  font-size: clamp(14px, 1.15vw, 16px);
+  line-height: 1.35;
+  font-weight: 850;
+}
+
+.faq-text {
+  margin: -4px 0 18px 48px;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.75;
+  font-weight: 600;
+}
+
+.faq-bottom-help {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 18px;
+  align-items: center;
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid color-mix(in srgb, var(--border) 86%, transparent);
+}
+
+.faq-bottom-help strong {
+  display: block;
+  color: var(--text);
+  font-size: 16px;
+  margin-bottom: 6px;
+}
+
+.faq-bottom-help p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.6;
+  font-weight: 650;
+}
+
+.page[data-mode="light"] .faq-page-modern {
+  background:
+    radial-gradient(
+      circle at 18% 18%,
+      color-mix(in srgb, var(--accent) 26%, transparent),
+      transparent 30%
+    ),
+    radial-gradient(
+      circle at 82% 8%,
+      color-mix(in srgb, var(--primary) 24%, transparent),
+      transparent 34%
+    ),
+    linear-gradient(
+      135deg,
+      var(--primary),
+      color-mix(in srgb, var(--primary) 72%, var(--surface)) 56%,
+      var(--surface)
+    );
+}
+
+.page[data-mode="light"] .faq-accordion-panel {
+  box-shadow: 0 34px 90px rgba(22, 48, 79, 0.18);
+}
+
+.page[data-mode="light"] .faq-logo-holder {
+  background:
+    radial-gradient(
+      circle at 50% 42%,
+      color-mix(in srgb, var(--accent) 24%, transparent),
+      transparent 31%
+    ),
+    radial-gradient(
+      circle at 50% 50%,
+      color-mix(in srgb, var(--primary) 16%, transparent),
+      transparent 48%
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--surface) 92%, var(--bg) 8%),
+      color-mix(in srgb, var(--img-bg) 86%, var(--surface) 14%)
+    );
+}
+
+@media (max-width: 980px) {
+  .faq-accordion-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .faq-logo-holder {
+    min-height: 320px;
+  }
+
+  .faq-visual {
+    min-height: 320px;
+  }
+
+  .faq-visual-main {
+    height: 290px;
+    transform: scale(0.82) translateY(-10px);
+  }
+
+  .faq-visual-card-top {
+    top: 34px;
+    right: clamp(14px, 8vw, 60px);
+  }
+
+  .faq-visual-card-bottom {
+    bottom: 34px;
+    left: clamp(14px, 8vw, 60px);
+  }
+
+  .faq-holder {
+    padding-top: 38px;
+  }
+}
+
+@media (max-width: 640px) {
+  .faq-page-modern {
+    padding-top: 24px;
+  }
+
+  .faq-logo-holder {
+    min-height: 250px;
+  }
+
+  .faq-visual {
+    min-height: 250px;
+  }
+
+  .faq-visual-main {
+    transform: scale(0.66) translateY(-30px);
+  }
+
+  .faq-visual-card {
+    display: none;
+  }
+
+  .faq-holder {
+    padding: 28px 20px 34px;
+  }
+
+  .faq-heading {
+    text-align: center;
+  }
+
+  .faq-page-eyebrow,
+  .faq-page-intro {
+    text-align: center;
+  }
+
+  .faq-summary {
+    grid-template-columns: 32px 1fr 20px;
+    gap: 10px;
+  }
+
+  .faq-question-icon {
+    width: 32px;
+    height: 32px;
+  }
+
+  .faq-text {
+    margin-left: 42px;
+  }
+
+  .faq-bottom-help {
+    grid-template-columns: 1fr;
+  }
+
+  .faq-bottom-help .btn {
+    width: 100%;
+  }
+}
+
+/* ============================================================
+   FAQ LEFT ILLUSTRATION — closer to original design,
+   adapted to project theme colors
+   ============================================================ */
+
+.faq-logo-holder {
+  position: relative;
+  overflow: hidden;
+  min-height: 100%;
+  background:
+    radial-gradient(
+      circle at 42% 42%,
+      color-mix(in srgb, var(--accent) 20%, transparent),
+      transparent 31%
+    ),
+    radial-gradient(
+      circle at 36% 52%,
+      color-mix(in srgb, var(--primary) 24%, transparent),
+      transparent 48%
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--surface) 90%, var(--bg) 10%),
+      color-mix(in srgb, var(--img-bg) 86%, var(--surface) 14%)
+    );
+  border-radius: 0;
+}
+
+.faq-logo-holder::before,
+.faq-logo-holder::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.faq-logo-holder::before {
+  width: 680px;
+  height: 680px;
+  left: -360px;
+  top: -70px;
+  border: 2px solid color-mix(in srgb, var(--accent) 18%, transparent);
+  box-shadow:
+    0 0 0 68px color-mix(in srgb, var(--accent) 4%, transparent),
+    0 0 0 138px color-mix(in srgb, var(--primary) 5%, transparent);
+}
+
+.faq-logo-holder::after {
+  width: 420px;
+  height: 420px;
+  right: -210px;
+  bottom: -140px;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--accent) 12%, transparent),
+    transparent 68%
+  );
+}
+
+.faq-visual {
+  position: relative;
+  z-index: 2;
+  min-height: 560px;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  padding: clamp(24px, 4vw, 56px);
+}
+
+.faq-hero-art {
+  width: min(560px, 112%);
+  max-width: none;
+  transform: translateX(-44px);
+  overflow: visible;
+}
+
+.faq-art-bg-shape-one {
+  fill: color-mix(in srgb, var(--card) 76%, transparent);
+  opacity: 0.58;
+}
+
+.faq-art-bg-shape-two {
+  fill: color-mix(in srgb, var(--primary) 14%, transparent);
+  opacity: 0.72;
+}
+
+.faq-art-floor {
+  fill: url(#faqBaseGradient);
+}
+
+.faq-art-floor-edge {
+  fill: color-mix(in srgb, var(--primary) 84%, black 16%);
+  opacity: 0.8;
+}
+
+.faq-art-screen-frame {
+  fill: var(--accent);
+}
+
+.faq-art-screen-inner {
+  fill: url(#faqScreenGradient);
+}
+
+.faq-art-top-bar {
+  fill: color-mix(in srgb, var(--primary) 82%, var(--accent) 18%);
+}
+
+.faq-art-dot {
+  fill: var(--accent);
+}
+
+.faq-art-card-one {
+  fill: color-mix(in srgb, var(--accent) 82%, white 18%);
+}
+
+.faq-art-card-two {
+  fill: color-mix(in srgb, var(--primary) 78%, var(--accent) 22%);
+}
+
+.faq-art-card-three {
+  fill: color-mix(in srgb, var(--on-primary) 72%, var(--accent) 28%);
+  opacity: 0.92;
+}
+
+.faq-art-stand {
+  fill: color-mix(in srgb, var(--primary) 78%, black 22%);
+}
+
+.faq-art-stand-base {
+  fill: color-mix(in srgb, var(--primary) 70%, var(--accent) 30%);
+}
+
+.faq-art-at {
+  font-family: var(--font-display);
+  font-size: 34px;
+  font-weight: 900;
+  fill: var(--accent);
+}
+
+.faq-art-hair {
+  fill: color-mix(in srgb, var(--primary) 82%, black 18%);
+}
+
+.faq-art-face,
+.faq-art-hand-left,
+.faq-art-hand-right {
+  fill: color-mix(in srgb, var(--accent) 42%, #8b4c22 58%);
+}
+
+.faq-art-body {
+  fill: color-mix(in srgb, var(--primary) 74%, black 26%);
+}
+
+.faq-art-arm-left,
+.faq-art-arm-right,
+.faq-art-leg-left,
+.faq-art-leg-right,
+.faq-art-foot-left,
+.faq-art-foot-right {
+  fill: none;
+  stroke: color-mix(in srgb, var(--accent) 42%, #8b4c22 58%);
+  stroke-width: 15;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.faq-art-leg-left,
+.faq-art-leg-right {
+  stroke: color-mix(in srgb, var(--primary) 78%, black 22%);
+  stroke-width: 17;
+}
+
+.faq-art-foot-left,
+.faq-art-foot-right {
+  stroke: var(--accent);
+  stroke-width: 12;
+}
+
+.faq-art-box-top {
+  fill: color-mix(in srgb, var(--accent) 92%, white 8%);
+}
+
+.faq-art-box-left {
+  fill: color-mix(in srgb, var(--accent) 78%, var(--primary) 22%);
+}
+
+.faq-art-box-right {
+  fill: color-mix(in srgb, var(--accent) 64%, var(--primary) 36%);
+}
+
+.faq-art-box-symbol {
+  font-family: var(--font-display);
+  font-size: 58px;
+  font-weight: 900;
+  fill: var(--on-accent);
+}
+
+.faq-art-bubble,
+.faq-art-spark {
+  fill: var(--accent);
+  opacity: 0.9;
+}
+
+.page[data-mode="light"] .faq-logo-holder {
+  background:
+    radial-gradient(
+      circle at 42% 42%,
+      color-mix(in srgb, var(--accent) 24%, transparent),
+      transparent 31%
+    ),
+    radial-gradient(
+      circle at 36% 52%,
+      color-mix(in srgb, var(--primary) 15%, transparent),
+      transparent 48%
+    ),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--surface) 94%, var(--bg) 6%),
+      color-mix(in srgb, var(--img-bg) 88%, var(--surface) 12%)
+    );
+}
+
+@media (max-width: 980px) {
+  .faq-visual {
+    min-height: 330px;
+    padding: 20px;
+  }
+
+  .faq-hero-art {
+    width: min(520px, 100%);
+    transform: translateX(0);
+  }
+}
+
+@media (max-width: 640px) {
+  .faq-visual {
+    min-height: 245px;
+    padding: 10px 14px 0;
+  }
+
+  .faq-hero-art {
+    width: 390px;
+    transform: translateY(-8px);
+  }
+}
+
+/* ============================================================
+   GLOBAL FOOTER + FAQ GAP FIX
+   Removes extra whitespace before footer and removes one
+   duplicate footer underline across every page.
+   ============================================================ */
+
+/* Remove the default 64px space that appears before the footer on all pages */
+.site-footer {
+  margin-top: 0 !important;
+}
+
+/* Keep only ONE footer underline.
+   The footer already has .footer-inner border-bottom,
+   so remove the second underline from the theme bar globally. */
+.footer-theme-bar {
+  border-top: 0 !important;
+}
+
+/* Reduce the extra bottom padding on the FAQ page before footer */
+.faq-page-modern {
+  padding-bottom: clamp(24px, 3vw, 38px) !important;
+}
+
+/* Make sure the FAQ shell itself does not create extra bottom spacing */
+.faq-page-shell {
+  margin-bottom: 0 !important;
+}
+
+/* Keep the FAQ panel close to the footer without touching it too tightly */
+.faq-accordion-panel {
+  margin-bottom: 0 !important;
 }

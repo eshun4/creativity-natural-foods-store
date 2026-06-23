@@ -2,7 +2,14 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import "./App.css";
 import { I18N } from "./data/i18n";
 import { products } from "./data/products";
-import { STORE_SETTINGS, getThemeVariables } from "./config/storeSettings";
+import {
+  STORE_SETTINGS,
+  fetchCustomerMarketFromServer,
+  getInitialCustomerMarket,
+  getMarketSettings,
+  getThemeVariables,
+  saveCustomerMarket,
+} from "./config/storeSettings";
 import { Header } from "./components/Header";
 import { Subnav } from "./components/Subnav";
 import { Footer } from "./components/Footer";
@@ -119,6 +126,10 @@ export default function App() {
 
   const [lang, setLang] = useState(() =>
     readStorage(STORAGE_KEYS.language, STORE_SETTINGS.defaults.language),
+  );
+
+  const [customerMarket, setCustomerMarket] = useState(() =>
+    getInitialCustomerMarket(),
   );
 
   const [openDropdown, setOpenDropdown] = useState(null);
@@ -253,6 +264,29 @@ export default function App() {
   }, [lang]);
 
   useEffect(() => {
+    let shouldIgnore = false;
+
+    async function syncCustomerMarket() {
+      const remoteMarket = await fetchCustomerMarketFromServer();
+
+      if (!shouldIgnore && remoteMarket) {
+        setCustomerMarket(remoteMarket);
+      }
+    }
+
+    syncCustomerMarket();
+
+    return () => {
+      shouldIgnore = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    saveCustomerMarket(customerMarket);
+    setPriceFilter(STORE_SETTINGS.defaults.priceFilter);
+  }, [customerMarket]);
+
+  useEffect(() => {
     writeStorage(STORAGE_KEYS.cart, cart);
   }, [cart]);
 
@@ -299,8 +333,9 @@ export default function App() {
   }, []);
 
   const translatedProducts = useMemo(
-    () => products.map((product) => translateProduct(product, t)),
-    [t],
+    () =>
+      products.map((product) => translateProduct(product, t, customerMarket)),
+    [customerMarket, t],
   );
 
   const productMap = useMemo(
@@ -354,7 +389,11 @@ export default function App() {
         activeCategories.length === 0 ||
         activeCategories.includes(product.category);
 
-      const priceMatch = priceInRange(product.finalPrice, priceFilter);
+      const priceMatch = priceInRange(
+        product.finalPrice,
+        priceFilter,
+        customerMarket,
+      );
       const discountMatch = discountMatches(product, discountFilter);
 
       const text =
@@ -370,6 +409,7 @@ export default function App() {
     discountFilter,
     priceFilter,
     translatedProducts,
+    customerMarket,
   ]);
 
   const suggestions = useMemo(() => {
@@ -536,6 +576,7 @@ export default function App() {
   }
 
   function placeOrder(orderDetails = null) {
+    const marketSettings = getMarketSettings(customerMarket);
     const storedItems = cartItems.map((item) => ({
       id: item.id,
       name: item.name,
@@ -543,13 +584,21 @@ export default function App() {
       image: item.image,
       finalPrice: item.finalPrice,
       quantity: item.quantity,
+      market: item.market,
+      currencyCode: item.currencyCode,
     }));
 
     const orderRecord = {
       id: `CNF-${Date.now()}`,
       createdAt: new Date().toISOString(),
       items: storedItems,
-      details: orderDetails,
+      market: customerMarket,
+      currencyCode: marketSettings.currencyCode,
+      details: {
+        ...orderDetails,
+        market: customerMarket,
+        currencyCode: marketSettings.currencyCode,
+      },
     };
 
     setLastOrderItems(storedItems);
@@ -696,6 +745,7 @@ export default function App() {
             onToggleWishlist={toggleWishlist}
             recentlyViewedProducts={recentlyViewedProducts}
             cartQuantityById={cartQuantityById}
+            customerMarket={customerMarket}
           />
         );
     }
